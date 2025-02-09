@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "마우스 제스처 네비게이션",
+  "version": "1.0",
+  "description": "마우스 제스처로 웹페이지 앞뒤 이동이 가능한 확장프로그램",
+  "permissions": [
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["gesture.js"]
+    }
+  ]
+} 
