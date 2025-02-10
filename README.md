@@ -1,52 +1,87 @@
-# 마우스 제스처 네비게이션 크롬 확장프로그램
+# Mouse Gesture & Copy Protection Bypass
+> A lightweight and fast Chrome extension that enables mouse gestures for web page navigation and bypasses copy protection on websites. Focused solely on essential features for optimal performance and speed.
 
-마우스 제스처를 사용하여 웹 페이지를 앞뒤로 이동할 수 있는 크롬 확장프로그램입니다. 직관적인 제스처와 시각적 피드백을 통해 편리한 웹 브라우징을 제공합니다.
+# 마우스 제스처 & 복사방지 해제
+> 마우스 제스처로 웹 페이지를 앞뒤로 이동하고, 복사 방지된 사이트에서도 자유롭게 콘텐츠를 복사할 수 있는 크롬 확장프로그램입니다. 불필요한 기능을 제외하고 핵심 기능에만 집중하여 가볍고 빠른 실행 속도를 제공합니다.
 
-## 주요 기능
+## Key Features / 주요 기능
 
-- 오른쪽 마우스 버튼을 누른 상태에서 왼쪽으로 드래그: 뒤로가기
-- 오른쪽 마우스 버튼을 누른 상태에서 오른쪽으로 드래그: 앞으로가기
-- 드래그 방향에 따른 화살표 표시
-- 드래그 거리에 따른 화살표 크기 변화
-- 부드러운 애니메이션 효과
+### Fast & Lightweight Gesture Navigation / 빠르고 가벼운 제스처 네비게이션
+- Right-click drag left: Go back
+- Right-click drag right: Go forward
+- Visual arrow feedback based on drag direction
+- Dynamic arrow size based on drag distance
+- Smooth animation effects
 
-## 설치 방법
+### Simple Copy Protection Bypass / 간편한 복사 방지 해제
+- Enable context menu on right-click blocked sites
+- Enable text selection on drag-blocked sites
+- Toggle bypass feature from extension menu
+- Automatic settings persistence
 
-1. 이 저장소를 클론하거나 다운로드합니다.
+## Why It's Fast & Lightweight / 가볍고 빠른 이유
+- Minimal resource usage with essential features only
+- Optimized background processes for low memory footprint
+- Efficient event handling for quick response
+- No unnecessary external libraries
+- Performance-optimized code
+
+## Installation / 설치 방법
+
+1. Clone or download this repository
+   ```bash
    git clone https://github.com/purestory/mouse-gesture-navigation.git
-2. 크롬 브라우저에서 `chrome://extensions`로 이동합니다.
-3. 우측 상단의 "개발자 모드"를 활성화합니다.
-4. "압축해제된 확장 프로그램을 로드합니다" 버튼을 클릭합니다.
-5. 다운로드한 폴더를 선택합니다.
+   ```
+2. Go to `chrome://extensions` in Chrome browser
+3. Enable "Developer mode"
+4. Click "Load unpacked extension"
+5. Select the downloaded folder
 
-## 사용 방법
+## How to Use / 사용 방법
 
-1. 웹 페이지에서 마우스 오른쪽 버튼을 누릅니다.
-2. 버튼을 누른 상태에서 좌우로 드래그합니다.
-3. 드래그 방향에 따라 화살표가 표시됩니다.
-4. 충분한 거리를 드래그하면 페이지가 이동됩니다.
+### Gesture Navigation / 제스처 네비게이션
+1. Press and hold right mouse button on any webpage
+2. Drag left or right
+3. Arrow indicator shows gesture direction
+4. Release button to execute navigation
 
-## 특징
+### Copy Protection Bypass / 복사 방지 해제
+1. Right-click extension icon
+2. Select "Enable Protection Bypass"
+3. Click again to disable
 
-- 실수로 오른쪽 클릭했을 때 컨텍스트 메뉴가 나타나도록 지연시간 적용
-- 드래그 거리에 따른 동적인 화살표 크기 조절
-- 부드러운 애니메이션으로 직관적인 사용자 경험 제공
-- 모든 웹사이트에서 사용 가능
+## Features / 특징
 
-## 기술 스택
+- Lightweight design focused on navigation and copy protection bypass
+- Delayed context menu for accidental right-clicks
+- Dynamic arrow size feedback
+- Smooth animation for intuitive user experience
+- Works on all websites
+- Enhanced usability with copy protection bypass
+- Automatic settings persistence
+- Extension icons in 16x16, 48x48, 128x128 sizes
+
+## Tech Stack / 기술 스택
 
 - JavaScript (ES6+)
 - Chrome Extension API
 - CSS3
+- Chrome Storage API
+- Chrome Context Menus API
 
-## 개발자
+## Project Structure / 프로젝트 구조
+
+project-root/
+├── manifest.json     # Extension configuration
+
+## Developer
 
 [@purestory](https://github.com/purestory)
 
-## 라이선스
+## License
 
 MIT License
 
-## 버그 리포트 및 기능 제안
+## Bug Reports and Feature Requests
 
-버그를 발견하시거나 새로운 기능을 제안하고 싶으시다면 GitHub Issues에 등록해 주세요. 
+If you find a bug or want to suggest a new feature, please register it in GitHub Issues. 

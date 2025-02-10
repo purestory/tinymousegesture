@@ -1,14 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "마우스 제스처 네비게이션",
+  "name": "Mouse Gesture & Copy Protection Bypass",
   "version": "1.0",
-  "description": "마우스 제스처로 웹페이지 앞뒤 이동이 가능한 확장프로그램",
+  "description": "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight.",
   "permissions": [
-    "tabs"
+    "tabs",
+    "activeTab",
+    "contextMenus",
+    "storage"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
+      "css": ["styles.css"],
       "js": ["gesture.js"]
     }
   ]
