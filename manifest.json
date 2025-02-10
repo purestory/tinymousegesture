@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Mouse Gesture & Copy Protection Bypass",
   "version": "1.0",
+  "description": "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight.",
   "permissions": [
     "tabs",
     "activeTab",
