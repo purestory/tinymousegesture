@@ -16,8 +16,8 @@ function updateContextMenu() {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: "toggleUnblock",
-      title: currentState.isUnblocked ? "Disable Protection Bypass ✓" : "Enable Protection Bypass",
-      contexts: ["all"]
+      title: currentState.isUnblocked ? "Disable Copy Protection ✓" : "Enable Copy Protection",
+      contexts: ["action"]
     });
   });
 }
