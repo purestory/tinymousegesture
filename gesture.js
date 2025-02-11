@@ -1,44 +1,56 @@
 const style = document.createElement('style');
 style.textContent = `
-  .gesture-arrow {
+  .gesture-container {
     position: fixed;
     pointer-events: none;
     background: rgba(0, 0, 0, 0.8);
-    width: 120px;
-    height: 120px;
+    width: 400px;
+    height: 400px;
     border-radius: 10px;
     z-index: 2147483647;
-    display: none;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
 
-  .gesture-arrow::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 60px;
-    height: 60px;
+  .gesture-container.hidden {
+    display: none;
+  }
+
+  .gesture-container.visible {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gesture-icon {
+    display: block;
+    width: 120px;
+    height: 120px;
     border: solid white;
-    border-width: 0 8px 8px 0;
-    display: inline-block;
+    border-width: 0 16px 16px 0;
     transform-origin: center;
+    margin-bottom: 20px;
   }
 
-  .arrow-left::after {
-    transform: translate(-30%, -50%) rotate(135deg);
+  .arrow-left .gesture-icon {
+    transform: rotate(135deg);
+  }
+  .arrow-right .gesture-icon {
+    transform: rotate(-45deg);
   }
 
-  .arrow-right::after {
-    transform: translate(-70%, -50%) rotate(-45deg);
+  .gesture-text {
+    color: white;
+    font-size: 24px;
+    margin-top: 24px;
   }
 
   html.dragging, 
-  html.dragging *,
-  body.dragging,
+  html.dragging *, 
+  body.dragging, 
   body.dragging * {
     user-select: none !important;
     -webkit-user-select: none !important;
@@ -68,14 +80,23 @@ class GestureNavigator {
     this.initializeState();
     this.setupEventListeners();
   }
-
+  
   createArrowElement() {
-    const arrow = document.createElement('div');
-    arrow.className = 'gesture-arrow';
-    document.documentElement.appendChild(arrow);
-    return arrow;
+    const container = document.createElement('div');
+    container.className = 'gesture-container hidden';
+    
+    const iconElement = document.createElement('div');
+    iconElement.className = 'gesture-icon';
+    container.appendChild(iconElement);
+    
+    const textElement = document.createElement('div');
+    textElement.className = 'gesture-text';
+    container.appendChild(textElement);
+    
+    document.documentElement.appendChild(container);
+    return { container, icon: iconElement, text: textElement };
   }
-
+  
   async initializeState() {
     const data = await chrome.storage.local.get('isUnblocked');
     this.isUnblocked = data.isUnblocked || false;
@@ -83,7 +104,7 @@ class GestureNavigator {
       this.unblockAll();
     }
   }
-
+  
   setupEventListeners() {
     document.addEventListener('mousedown', this.handleMouseDown.bind(this), { capture: true });
     document.addEventListener('mousemove', this.handleMouseMove.bind(this), { capture: true });
@@ -91,7 +112,7 @@ class GestureNavigator {
     document.addEventListener('contextmenu', this.handleContextMenu.bind(this), { capture: true });
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
   }
-
+  
   handleMouseDown(e) {
     if (e.button === 2) {
       this.isMouseDown = true;
@@ -99,25 +120,25 @@ class GestureNavigator {
       this.startY = e.clientY;
     }
   }
-
+  
   handleMouseMove(e) {
     if (!this.isMouseDown) return;
-    
     this.dragDistance = e.clientX - this.startX;
-    
     if (Math.abs(this.dragDistance) > 20) {
       this.isGesturing = true;
       document.documentElement.classList.add('dragging');
-      
-      // 화살표 표시
-      this.arrow.style.display = 'block';
-      this.arrow.className = 'gesture-arrow ' + (this.dragDistance < 0 ? 'arrow-left' : 'arrow-right');
-
+      if (this.dragDistance < 0) {
+        this.arrow.container.className = 'gesture-container visible arrow-left';
+        this.arrow.text.textContent = '뒤로';
+      } else {
+        this.arrow.container.className = 'gesture-container visible arrow-right';
+        this.arrow.text.textContent = '앞으로';
+      }
       e.preventDefault();
       e.stopPropagation();
     }
   }
-
+  
   handleMouseUp(e) {
     if (this.isMouseDown && e.button === 2) {
       if (Math.abs(this.dragDistance) > 20) {
@@ -130,13 +151,11 @@ class GestureNavigator {
         }
         e.preventDefault();
         e.stopPropagation();
-        this.isGesturing = true;
       }
-      
       this.resetGestureState();
     }
   }
-
+  
   handleContextMenu(e) {
     if (this.isGesturing) {
       e.preventDefault();
@@ -144,7 +163,7 @@ class GestureNavigator {
       this.isGesturing = false;
     }
   }
-
+  
   handleMessage(request, sender, sendResponse) {
     if (request.action === "toggleUnblock") {
       this.isUnblocked = request.state;
@@ -155,26 +174,29 @@ class GestureNavigator {
       }
     }
   }
-
+  
   resetGestureState() {
     this.isMouseDown = false;
     this.dragDistance = 0;
-    this.arrow.style.display = 'none';
+    this.arrow.container.className = 'gesture-container hidden';
     document.documentElement.classList.remove('dragging');
   }
-
+  
   unblockAll() {
     document.documentElement.classList.add('unblock-all');
     this.setupUnblockEvents();
   }
-
+  
   restoreBlock() {
     document.documentElement.classList.remove('unblock-all');
     location.reload();
   }
-
+  
   setupUnblockEvents() {
-    const events = ['contextmenu', 'selectstart', 'copy', 'cut', 'paste', 'mousedown', 'mouseup', 'mousemove', 'drag', 'dragstart'];
+    const events = [
+      'contextmenu', 'selectstart', 'copy', 'cut', 'paste',
+      'mousedown', 'mouseup', 'mousemove', 'drag', 'dragstart'
+    ];
     events.forEach(eventName => {
       document.addEventListener(eventName, (e) => {
         e.stopPropagation();
@@ -184,5 +206,4 @@ class GestureNavigator {
   }
 }
 
-// 인스턴스 생성
 new GestureNavigator();
