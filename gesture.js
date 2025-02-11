@@ -86,7 +86,7 @@ class GestureNavigator {
     this.isUnblocked = false;
     this.skipContextMenu = false; // 제스처 후 컨텍스트 메뉴 차단용 플래그
 
-    this.userLanguage = navigator.language || navigator.userLanguage;
+    // 다국어 처리: 인구가 많은 20개국 언어 순서로 "뒤로"와 "앞으로"를 표현
     this.texts = this.getLocalizedTexts();
 
     // Shadow DOM을 이용해 UI 생성 (스타일 격리)
@@ -96,63 +96,82 @@ class GestureNavigator {
     this.setupEventListeners();
   }
 
-  // 다국어 처리 함수
+  // 20개국 언어로 "뒤로"와 "앞으로"를 표현하고, 해당 언어가 없으면 영어로 표현
   getLocalizedTexts() {
     const texts = {
       back: {
-        'ko': '뒤로',
-        'ja': '戻る',
-        'zh': '返回',
-        'en': 'Back',
-        'default': 'Back'
+        zh: "返回",       // Chinese
+        es: "Atrás",      // Spanish
+        en: "Back",       // English
+        hi: "पीछे",      // Hindi
+        ar: "للخلف",     // Arabic
+        bn: "পিছনে",     // Bengali
+        pt: "Voltar",     // Portuguese
+        ru: "Назад",      // Russian
+        ja: "戻る",       // Japanese
+        pa: "ਪਿਛੇ",      // Punjabi
+        de: "Zurück",     // German
+        ko: "뒤로",       // Korean
+        fr: "Précédent",  // French
+        tr: "Geri",       // Turkish
+        vi: "Quay lại",   // Vietnamese
+        it: "Indietro",   // Italian
+        nl: "Terug",      // Dutch
+        pl: "Wstecz",     // Polish
+        th: "ย้อนกลับ",    // Thai
+        fa: "بازگشت"       // Persian (Farsi)
       },
       forward: {
-        'ko': '앞으로',
-        'ja': '進む',
-        'zh': '前进',
-        'en': 'Forward',
-        'default': 'Forward'
+        zh: "前进",       // Chinese
+        es: "Adelante",   // Spanish
+        en: "Forward",    // English
+        hi: "आगे",       // Hindi
+        ar: "للأمام",    // Arabic
+        bn: "সামনে",     // Bengali
+        pt: "Avançar",    // Portuguese
+        ru: "Вперёд",     // Russian
+        ja: "進む",       // Japanese
+        pa: "ਅੱਗੇ",      // Punjabi
+        de: "Vorwärts",   // German
+        ko: "앞으로",      // Korean
+        fr: "Suivant",    // French
+        tr: "İleri",      // Turkish
+        vi: "Tiến",       // Vietnamese
+        it: "Avanti",     // Italian
+        nl: "Vooruit",    // Dutch
+        pl: "Dalej",      // Polish
+        th: "ไปข้างหน้า",   // Thai
+        fa: "ادامه"        // Persian (Farsi)
       }
     };
-    const langCode = this.userLanguage.split('-')[0];
+    const langCode = (navigator.language || navigator.userLanguage).split('-')[0];
     return {
-      back: texts.back[langCode] || texts.back.default,
-      forward: texts.forward[langCode] || texts.forward.default
+      back: texts.back[langCode] || texts.back.en,
+      forward: texts.forward[langCode] || texts.forward.en
     };
   }
 
   // Shadow DOM을 활용해 제스처 UI 요소 생성
   createUI() {
-    // 페이지 스타일 영향을 받지 않도록 모든 스타일 초기화
     const host = document.createElement('div');
     host.id = 'gesture-host';
     host.style.all = 'initial';
 
-    // ShadowRoot 생성
     const shadow = host.attachShadow({ mode: 'open' });
-
-    // 스타일 요소 추가
     const styleElem = document.createElement('style');
     styleElem.textContent = style;
     shadow.appendChild(styleElem);
 
-    // 제스처 컨테이너 생성
     const container = document.createElement('div');
     container.className = 'gesture-container';
-
-    // 아이콘 요소 생성
     const icon = document.createElement('div');
     icon.className = 'gesture-icon';
-
-    // 텍스트 요소 생성
     const text = document.createElement('div');
     text.className = 'gesture-text';
 
     container.appendChild(icon);
     container.appendChild(text);
     shadow.appendChild(container);
-
-    // 호스트 요소를 문서에 추가
     document.body.appendChild(host);
 
     return { host, container, icon, text };
@@ -210,7 +229,7 @@ class GestureNavigator {
       } else if (this.dragDistance > 0) {
         history.forward();
       }
-      // 제스처 사용 후 컨텍스트 메뉴 차단을 위해 플래그 설정
+      // 제스처 사용 후 컨텍스트 메뉴가 뜨지 않도록 플래그 설정
       this.skipContextMenu = true;
     }
 
@@ -222,7 +241,6 @@ class GestureNavigator {
     if (this.isGesturing || this.skipContextMenu) {
       e.preventDefault();
       e.stopPropagation();
-      // 한 번 차단한 후 flag 초기화
       this.skipContextMenu = false;
     }
   }
