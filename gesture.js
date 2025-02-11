@@ -3,8 +3,8 @@ const style = `
     position: fixed !important;
     pointer-events: none !important;
     background: rgba(0, 0, 0, 0.8) !important;
-    width: 400px !important;
-    height: 400px !important;
+    width: 300px !important;
+    height: 300px !important;
     border-radius: 10px !important;
     z-index: 2147483647 !important;
     display: none;
@@ -17,6 +17,7 @@ const style = `
     border: none !important;
     font-family: Arial, sans-serif !important;
     box-sizing: border-box !important;
+    gap: 80px !important;
   }
   .gesture-container.visible {
     display: flex !important;
@@ -37,16 +38,16 @@ const style = `
     box-sizing: border-box !important;
   }
   .arrow-left .gesture-icon {
-    transform: rotate(135deg) !important;
+    transform: translateY(30px) rotate(135deg) !important;
   }
   .arrow-right .gesture-icon {
-    transform: rotate(-45deg) !important;
+    transform: translateY(30px) rotate(-45deg) !important;
   }
   .gesture-text {
     color: white !important;
     font-size: 24px !important;
     font-weight: bold !important;
-    margin-top: 20px !important;
+    margin-top: 0 !important;
     text-align: center !important;
     width: auto !important;
     height: auto !important;
@@ -118,8 +119,8 @@ class GestureNavigator {
         it: "Indietro",   // Italian
         nl: "Terug",      // Dutch
         pl: "Wstecz",     // Polish
-        th: "ย้อนกลับ",    // Thai
-        fa: "بازگشت"       // Persian (Farsi)
+        th: "ย้อนกลับ",   // Thai
+        fa: "بازگشت"      // Persian (Farsi)
       },
       forward: {
         zh: "前进",       // Chinese
@@ -141,7 +142,7 @@ class GestureNavigator {
         nl: "Vooruit",    // Dutch
         pl: "Dalej",      // Polish
         th: "ไปข้างหน้า",   // Thai
-        fa: "ادامه"        // Persian (Farsi)
+        fa: "ادامه"       // Persian (Farsi)
       }
     };
     const langCode = (navigator.language || navigator.userLanguage).split('-')[0];
@@ -229,7 +230,6 @@ class GestureNavigator {
       } else if (this.dragDistance > 0) {
         history.forward();
       }
-      // 제스처 사용 후 컨텍스트 메뉴가 뜨지 않도록 플래그 설정
       this.skipContextMenu = true;
     }
 
