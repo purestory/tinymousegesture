@@ -244,11 +244,18 @@ class GestureNavigator {
 
   // 이벤트 리스너 등록
   setupEventListeners() {
-    document.addEventListener('mousedown', this.handleMouseDown.bind(this), { capture: true });
-    document.addEventListener('mousemove', this.handleMouseMove.bind(this), { capture: true });
-    document.addEventListener('mouseup', this.handleMouseUp.bind(this), { capture: true });
+    const events = {
+      'mousedown': this.handleMouseDown,
+      'mousemove': this.handleMouseMove,
+      'mouseup': this.handleMouseUp,
+      'contextmenu': this.handleContextMenu
+    };
+
+    Object.entries(events).forEach(([event, handler]) => {
+      document.addEventListener(event, handler.bind(this), { capture: true });
+    });
+
     window.addEventListener('mouseup', this.handleMouseUp.bind(this), { capture: true });
-    document.addEventListener('contextmenu', this.handleContextMenu.bind(this), { capture: true });
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
   }
 
