@@ -185,33 +185,25 @@ class GestureNavigator {
       this.startX = e.clientX;
       this.startY = e.clientY;
       this.dragDistance = 0;
-      this.isGesturing = false;
     }
   }
 
   // 마우스 이동 이벤트 처리
   handleMouseMove(e) {
     if (!this.isMouseDown) return;
+    
     this.dragDistance = e.clientX - this.startX;
-
+    
     if (Math.abs(this.dragDistance) > 20) {
       this.isGesturing = true;
       document.documentElement.classList.add('dragging');
-
-      if (!this.ui.container.classList.contains('visible')) {
-        this.ui.container.classList.add('visible');
-      }
-
-      if (this.dragDistance < 0) {
-        this.ui.container.classList.remove('arrow-right');
-        this.ui.container.classList.add('arrow-left');
-        this.ui.text.textContent = this.texts.back;
-      } else {
-        this.ui.container.classList.remove('arrow-left');
-        this.ui.container.classList.add('arrow-right');
-        this.ui.text.textContent = this.texts.forward;
-      }
-
+      
+      this.ui.container.classList.add('visible');
+      this.ui.container.classList.toggle('arrow-left', this.dragDistance < 0);
+      this.ui.container.classList.toggle('arrow-right', this.dragDistance > 0);
+      
+      this.ui.text.textContent = this.dragDistance < 0 ? this.texts.back : this.texts.forward;
+      
       e.preventDefault();
       e.stopPropagation();
     }
@@ -219,21 +211,17 @@ class GestureNavigator {
 
   // 마우스 업 이벤트 처리
   handleMouseUp(e) {
-    if (!this.isMouseDown) return;
-
-    if (this.isGesturing) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (this.dragDistance < 0) {
-        history.back();
-      } else if (this.dragDistance > 0) {
-        history.forward();
+    if (this.isMouseDown && e.button === 2) {
+      if (Math.abs(this.dragDistance) > 100) {
+        if (this.dragDistance < 0) {
+          history.back();
+        } else {
+          history.forward();
+        }
+        this.skipContextMenu = true;
       }
-      this.skipContextMenu = true;
+      this.resetGestureState();
     }
-
-    this.resetGestureState();
   }
 
   // 컨텍스트 메뉴 이벤트 처리
