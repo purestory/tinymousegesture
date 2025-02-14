@@ -60,26 +60,6 @@ MIT License
 ## Author / 작성자
 purestory (https://github.com/purestory)
 
-## Key Features / 주요 기능
-
-### Fast & Lightweight Gesture Navigation / 빠르고 가벼운 제스처 네비게이션
-- Right-click drag left: Go back / 오른쪽 클릭 후 왼쪽으로 드래그: 뒤로 가기
-- Right-click drag right: Go forward / 오른쪽 클릭 후 오른쪽으로 드래그: 앞으로 가기
-- Visual arrow feedback based on drag direction / 드래그 방향에 따른 시각적 화살표 표시
-- Smooth animation effects / 부드러운 애니메이션 효과
-
-### Simple Copy Protection Bypass / 간편한 복사 방지 해제
-- Enable context menu on right-click blocked sites / 우클릭 차단된 사이트에서 컨텍스트 메뉴 활성화
-- Enable text selection on drag-blocked sites / 드래그 차단된 사이트에서 텍스트 선택 가능
-- Toggle bypass feature from extension menu / 확장 프로그램 메뉴에서 기능 켜고 끄기
-- Automatic settings persistence / 설정 자동 저장
-
-## Why It's Fast & Lightweight / 가볍고 빠른 이유
-- Modular code structure for efficient management / 효율적인 관리를 위한 모듈식 코드 구조
-- Optimized event handling with class-based architecture / 클래스 기반 아키텍처로 최적화된 이벤트 처리
-- No external dependencies / 외부 라이브러리 의존성 없음
-- Performance-focused implementation / 성능 중심 구현
-
 ## Project Structure / 프로젝트 구조
 
 project-root/
