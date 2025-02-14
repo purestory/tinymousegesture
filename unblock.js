@@ -18,10 +18,11 @@ class CopyProtectionBypass {
   }
 
   setupEventListeners() {
-    chrome.runtime.onMessage.addListener((request) => {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.action === 'toggleUnblock') {
         this.isUnblocked = request.state;
         this.isUnblocked ? this.unblockAll() : this.restoreBlock();
+        sendResponse({ success: true });
       }
       return true;
     });

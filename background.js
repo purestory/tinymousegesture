@@ -13,12 +13,20 @@ class BackgroundManager {
           id: "toggleUnblock",
           title: this.currentState.isUnblocked ? "복사 방지 해제 ✓" : "복사 방지 해제",
           contexts: ["action"]
+        }, () => {
+          if (chrome.runtime.lastError) {
+            console.log('toggleUnblock 메뉴 생성 오류:', chrome.runtime.lastError);
+          }
         });
 
         chrome.contextMenus.create({
           id: 'searchWithPrefix',
           title: '"%s" 검색하기',
           contexts: ['selection']
+        }, () => {
+          if (chrome.runtime.lastError) {
+            console.log('searchWithPrefix 메뉴 생성 오류:', chrome.runtime.lastError);
+          }
         });
       });
     };

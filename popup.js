@@ -40,10 +40,18 @@ class PopupManager {
     
     try {
       await chrome.storage.local.set({ searchPrefix: prefix });
-      chrome.runtime.sendMessage({
-        action: 'updateSearchPrefix',
-        prefix: prefix
-      });
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (tab?.id) {
+        const response = await chrome.tabs.sendMessage(tab.id, {
+          action: 'getCurrentSelection'
+        });
+        
+        await chrome.runtime.sendMessage({
+          action: 'updateSearchPrefix',
+          prefix: prefix,
+          text: response?.selectedText || ''
+        });
+      }
       this.lastSavedPrefix = prefix;
       setTimeout(() => window.close(), this.POPUP_CLOSE_DELAY);
     } catch (error) {
@@ -58,12 +66,14 @@ class PopupManager {
       await chrome.storage.local.set({ isUnblocked: newState });
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (tab?.id) {
-        await chrome.tabs.sendMessage(tab.id, {
-          action: 'toggleUnblock',
-          state: newState
+        await new Promise((resolve) => {
+          chrome.tabs.sendMessage(tab.id, {
+            action: 'toggleUnblock',
+            state: newState
+          }, resolve);
         });
       }
-      setTimeout(() => window.close(), this.POPUP_CLOSE_DELAY);
+      window.close();
     } catch (error) {
       console.error('상태 변경 오류:', error);
       e.target.checked = !newState;

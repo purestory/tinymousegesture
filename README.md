@@ -27,17 +27,18 @@
 ## Project Structure / 프로젝트 구조
 
 project-root/
-├── manifest.json     # 확장프로그램 설정
-├── popup.html       # 팝업 UI
-├── popup.js        # 팝업 기능
-├── background.js   # 백그라운드 서비스 워커
-├── gesture.js      # 마우스 제스처 기능
-├── unblock.js      # 복사 방지 해제 기능
-├── searchModifier.js # 검색 접두어 기능
-└── icons/          # 아이콘 폴더
-    ├── icon16.png
-    ├── icon48.png
-    └── icon128.png
+├── manifest.json # Extension configuration / 확장프로그램 설정
+├── popup.html # Extension popup UI / 팝업 UI
+├── popup.js # Popup functionality / 팝업 기능
+├── background.js # Background service worker / 백그라운드 서비스
+├── gesture.js # Mouse gesture functionality / 마우스 제스처 기능
+├── unblock.js # Copy protection bypass / 복사 방지 해제
+├── searchModifier.js # Search prefix functionality / 검색 접두어 기능
+│
+└── icons/ # Extension icons / 확장프로그램 아이콘
+├── icon16.png # Small icon / 작은 아이콘
+├── icon48.png # Medium icon / 중간 아이콘
+└── icon128.png # Large icon / 큰 아이콘
 
 ## Installation / 설치 방법
 

@@ -17,6 +17,17 @@ class SearchModifier {
     setupMessageListener() {
       let selectionTimeout;
       
+      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request.action === 'getCurrentSelection') {
+          sendResponse({
+            selectedText: window.getSelection().toString().trim()
+          });
+        } else if (request.action === 'updateSearchPrefix') {
+          this.prefix = request.prefix;
+        }
+        return true;
+      });
+  
       const handleSelection = () => {
         clearTimeout(selectionTimeout);
         selectionTimeout = setTimeout(() => {
@@ -32,13 +43,6 @@ class SearchModifier {
   
       ['selectionchange', 'contextmenu'].forEach(eventName => {
         document.addEventListener(eventName, handleSelection, true);
-      });
-  
-      chrome.runtime.onMessage.addListener((request) => {
-        if (request.action === 'updateSearchPrefix') {
-          this.prefix = request.prefix;
-        }
-        return true;
       });
     }
   }
