@@ -99,6 +99,42 @@ class PopupManager {
       e.target.checked = !newState;
     }
   }
+  
+  async initializeYoutubeControl() {
+    const data = await chrome.storage.local.get('youtubeSkipTime');
+    this.skipTimeInput = document.getElementById('skipTimeInput');
+    this.skipTimeSaveButton = document.getElementById('skipTimeSaveButton');
+    this.skipTimeInput.value = data.youtubeSkipTime || 5;
+    
+    this.skipTimeInput.addEventListener('input', this.handleSkipTimeInput.bind(this));
+    this.skipTimeSaveButton.addEventListener('click', this.handleSkipTimeSave.bind(this));
+  }
+  
+  handleSkipTimeInput(e) {
+    const value = parseInt(e.target.value);
+    this.skipTimeSaveButton.disabled = !value || value < 1 || value > 60;
+    
+    if (!this.skipTimeSaveButton.disabled) {
+      this.skipTimeSaveButton.style.background = '#4285f4';
+      this.skipTimeSaveButton.style.cursor = 'pointer';
+    } else {
+      this.skipTimeSaveButton.style.background = '#cccccc';
+      this.skipTimeSaveButton.style.cursor = 'not-allowed';
+    }
+  }
+  
+  async handleSkipTimeSave() {
+    const skipTime = parseInt(this.skipTimeInput.value);
+    if (!skipTime || skipTime < 1 || skipTime > 60) return;
+    
+    try {
+      await chrome.storage.local.set({ youtubeSkipTime: skipTime });
+      setTimeout(() => window.close(), this.POPUP_CLOSE_DELAY);
+    } catch (error) {
+      console.error('스킵 시간 저장 오류:', error);
+    }
+  }
+  
 }
 
 new PopupManager();

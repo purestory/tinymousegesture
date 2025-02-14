@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "tiny mouse gesture & etc.",
-  "version": "1.3",
+  "version": "1.4",
   "description": "Lightweight mouse gestures, copy protection bypass, and quick search.",
   "homepage_url": "https://github.com/purestory/tinymousegesture",
   "permissions": [
@@ -31,6 +31,10 @@
     {
       "matches": ["<all_urls>"],
       "js": ["i18n/messages.js", "gesture.js", "unblock.js", "searchModifier.js"]
+    },
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["youtubeControl.js"]
     }
   ],
   "web_accessible_resources": [{
