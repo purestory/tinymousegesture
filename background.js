@@ -1,47 +1,101 @@
-let currentState = {
-  isUnblocked: false
-};
+class BackgroundManager {
+  constructor() {
+    this.currentState = { isUnblocked: false };
+    this.currentPrefix = '';
+    this.setupMenus();
+    this.setupListeners();
+  }
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.get('isUnblocked', (data) => {
-    currentState.isUnblocked = data.isUnblocked || false;
-    chrome.storage.local.set(currentState, () => {
-      if (chrome.runtime.lastError) {
-        console.error('Error setting currentState:', chrome.runtime.lastError);
+  setupMenus() {
+    const createContextMenus = () => {
+      chrome.contextMenus.removeAll(() => {
+        chrome.contextMenus.create({
+          id: "toggleUnblock",
+          title: this.currentState.isUnblocked ? "복사 방지 해제 ✓" : "복사 방지 해제",
+          contexts: ["action"]
+        });
+
+        chrome.contextMenus.create({
+          id: 'searchWithPrefix',
+          title: '"%s" 검색하기',
+          contexts: ['selection']
+        });
+      });
+    };
+
+    chrome.storage.local.get(['isUnblocked', 'searchPrefix'], (data) => {
+      this.currentState.isUnblocked = data.isUnblocked || false;
+      this.currentPrefix = data.searchPrefix || '';
+      createContextMenus();
+    });
+
+    chrome.runtime.onInstalled.addListener(() => {
+      chrome.storage.local.get(['isUnblocked', 'searchPrefix'], (data) => {
+        this.currentState.isUnblocked = data.isUnblocked || false;
+        this.currentPrefix = data.searchPrefix || '';
+        createContextMenus();
+      });
+    });
+  }
+
+  setupListeners() {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      switch (request.action) {
+        case 'updateContextMenu':
+          this.updateSearchMenu(request.text);
+          break;
+        case 'updateSearchPrefix':
+          this.currentPrefix = request.prefix;
+          this.updateSearchMenu(request.text);
+          break;
+        case 'toggleUnblock':
+          this.toggleUnblockState(sender.tab);
+          break;
       }
-      updateContextMenu();
+      return true;
     });
-  });
-});
 
-function updateContextMenu() {
-  chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({
-      id: "toggleUnblock",
-      title: currentState.isUnblocked ? "Disable Copy Protection ✓" : "Enable Copy Protection",
-      contexts: ["action"]
+    chrome.contextMenus.onClicked.addListener((info, tab) => {
+      if (info.menuItemId === 'searchWithPrefix') {
+        const searchText = this.currentPrefix ? 
+          `${this.currentPrefix} ${info.selectionText}` : 
+          info.selectionText;
+        
+        chrome.tabs.create({ 
+          url: `https://www.google.com/search?q=${encodeURIComponent(searchText)}`
+        });
+      } else if (info.menuItemId === "toggleUnblock") {
+        this.toggleUnblockState(tab);
+      }
     });
-  });
-}
+  }
 
-async function toggleState(tab) {
-  currentState.isUnblocked = !currentState.isUnblocked;
-  try {
-    await chrome.storage.local.set(currentState);
-    updateContextMenu();
-    if (tab && tab.id) {
-      await chrome.tabs.sendMessage(tab.id, {
+  updateSearchMenu(selectedText) {
+    if (!selectedText) return;
+    const searchText = this.currentPrefix ? 
+      `${this.currentPrefix} ${selectedText}` : 
+      selectedText;
+    
+    chrome.contextMenus.update('searchWithPrefix', {
+      title: `"${searchText}" 검색하기`
+    });
+  }
+
+  async toggleUnblockState(tab) {
+    this.currentState.isUnblocked = !this.currentState.isUnblocked;
+    await chrome.storage.local.set({ isUnblocked: this.currentState.isUnblocked });
+    
+    chrome.contextMenus.update("toggleUnblock", {
+      title: this.currentState.isUnblocked ? "복사 방지 해제 ✓" : "복사 방지 해제"
+    });
+
+    if (tab?.id) {
+      chrome.tabs.sendMessage(tab.id, {
         action: "toggleUnblock",
-        state: currentState.isUnblocked
+        state: this.currentState.isUnblocked
       });
     }
-  } catch (error) {
-    console.error('Error toggling state:', error);
   }
 }
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "toggleUnblock") {
-    toggleState(tab);
-  }
-});
+new BackgroundManager();

@@ -59,16 +59,48 @@
     input:checked + .slider:before {
       transform: translateX(20px);
     }
+    .search-prefix {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+    .search-input-group {
+      display: flex;
+      gap: 5px;
+      padding: 0 10px;
+    }
+    #searchPrefix {
+      flex: 1;
+      padding: 5px;
+    }
+    #savePrefix {
+      padding: 5px 10px;
+      background: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #savePrefix:hover {
+      background: #3367d6;
+    }
   </style>
 </head>
 <body>
   <div class="menu-item">
-    <span>Enable Copy Protection</span>
+    <span>복사 방지 해제</span>
     <label class="toggle-switch">
       <input type="checkbox" id="toggleProtection">
       <span class="slider"></span>
     </label>
   </div>
+  <div class="search-prefix">
+    <div class="search-input-group">
+      <input type="text" id="searchPrefix" placeholder="검색어 접두어">
+      <button id="savePrefix">저장</button>
+    </div>
+  </div>
+  <script src="utils.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

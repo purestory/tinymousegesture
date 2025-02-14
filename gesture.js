@@ -67,14 +67,7 @@ const style = `
     user-select: none !important;
     -webkit-user-select: none !important;
   }
-  html.unblock-all *, 
-  body.unblock-all * {
-    -webkit-user-select: text !important;
-    -moz-user-select: text !important;
-    -ms-user-select: text !important;
-    user-select: text !important;
-    pointer-events: auto !important;
-  }
+
 `;
 
 class GestureNavigator {
@@ -84,17 +77,25 @@ class GestureNavigator {
     this.startY = 0;
     this.dragDistance = 0;
     this.isGesturing = false;
-    this.isUnblocked = false;
-    this.skipContextMenu = false; // 제스처 후 컨텍스트 메뉴 차단용 플래그
-
-    // 다국어 처리: 인구가 많은 20개국 언어 순서로 "뒤로"와 "앞으로"를 표현
+    this.skipContextMenu = false;
     this.texts = this.getLocalizedTexts();
+    this.initialize();
+  }
 
-    // Shadow DOM을 이용해 UI 생성 (스타일 격리)
-    this.ui = this.createUI();
-
-    this.initializeState();
+  initialize() {
+    this.createGestureContainer();
     this.setupEventListeners();
+  }
+
+  createGestureContainer() {
+    const container = document.createElement('div');
+    container.className = 'gesture-container';
+    container.innerHTML = `
+      <div class="gesture-arrow"></div>
+      <div class="gesture-text"></div>
+    `;
+    document.body.appendChild(container);
+    this.container = container;
   }
 
   // 20개국 언어로 "뒤로"와 "앞으로"를 표현하고, 해당 언어가 없으면 영어로 표현
@@ -152,32 +153,6 @@ class GestureNavigator {
     };
   }
 
-  // Shadow DOM을 활용해 제스처 UI 요소 생성
-  createUI() {
-    const host = document.createElement('div');
-    host.id = 'gesture-host';
-    host.style.all = 'initial';
-
-    const shadow = host.attachShadow({ mode: 'open' });
-    const styleElem = document.createElement('style');
-    styleElem.textContent = style;
-    shadow.appendChild(styleElem);
-
-    const container = document.createElement('div');
-    container.className = 'gesture-container';
-    const icon = document.createElement('div');
-    icon.className = 'gesture-icon';
-    const text = document.createElement('div');
-    text.className = 'gesture-text';
-
-    container.appendChild(icon);
-    container.appendChild(text);
-    shadow.appendChild(container);
-    document.body.appendChild(host);
-
-    return { host, container, icon, text };
-  }
-
   // 마우스 다운 이벤트 처리 (오른쪽 클릭)
   handleMouseDown(e) {
     if (e.button === 2) {
@@ -198,11 +173,14 @@ class GestureNavigator {
       this.isGesturing = true;
       document.documentElement.classList.add('dragging');
       
-      this.ui.container.classList.add('visible');
-      this.ui.container.classList.toggle('arrow-left', this.dragDistance < 0);
-      this.ui.container.classList.toggle('arrow-right', this.dragDistance > 0);
+      this.container.classList.add('visible');
+      this.container.classList.toggle('arrow-left', this.dragDistance < 0);
+      this.container.classList.toggle('arrow-right', this.dragDistance > 0);
       
-      this.ui.text.textContent = this.dragDistance < 0 ? this.texts.back : this.texts.forward;
+      const textElement = this.container.querySelector('.gesture-text');
+      if (textElement) {
+        textElement.textContent = this.dragDistance < 0 ? this.texts.back : this.texts.forward;
+      }
       
       e.preventDefault();
       e.stopPropagation();
@@ -238,61 +216,27 @@ class GestureNavigator {
     this.isMouseDown = false;
     this.dragDistance = 0;
     this.isGesturing = false;
-    this.ui.container.classList.remove('visible', 'arrow-left', 'arrow-right');
+    this.container.classList.remove('visible', 'arrow-left', 'arrow-right');
     document.documentElement.classList.remove('dragging');
   }
 
-  // 이벤트 리스너 등록
   setupEventListeners() {
     const events = {
-      'mousedown': this.handleMouseDown,
-      'mousemove': this.handleMouseMove,
-      'mouseup': this.handleMouseUp,
-      'contextmenu': this.handleContextMenu
+      'mousedown': this.handleMouseDown.bind(this),
+      'mousemove': this.handleMouseMove.bind(this),
+      'mouseup': this.handleMouseUp.bind(this),
+      'contextmenu': this.handleContextMenu.bind(this)
     };
 
     Object.entries(events).forEach(([event, handler]) => {
-      document.addEventListener(event, handler.bind(this), { capture: true });
+      document.addEventListener(event, handler, { capture: true });
     });
 
-    window.addEventListener('mouseup', this.handleMouseUp.bind(this), { capture: true });
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
   }
 
-  // 저장된 상태 초기화
-  async initializeState() {
-    try {
-      const data = await chrome.storage.local.get('isUnblocked');
-      this.isUnblocked = data.isUnblocked || false;
-      if (this.isUnblocked) {
-        this.unblockAll();
-      }
-    } catch (error) {
-      console.error('initializeState error:', error);
-    }
-  }
-
-  // 메시지 수신 핸들러
-  handleMessage(request, sender, sendResponse) {
-    if (request.action === 'toggleUnblock') {
-      this.isUnblocked = request.state;
-      if (this.isUnblocked) {
-        this.unblockAll();
-      } else {
-        this.restoreBlock();
-      }
-    }
-  }
-
-  // 복사 보호 해제 (모든 요소 unblock)
-  unblockAll() {
-    document.documentElement.classList.add('unblock-all');
-  }
-
-  // 복사 보호 복원 (페이지 리로드)
-  restoreBlock() {
-    document.documentElement.classList.remove('unblock-all');
-    location.reload();
+  handleMessage(message) {
+    // Implementation of handleMessage method
   }
 }
 

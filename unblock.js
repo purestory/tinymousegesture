@@ -18,18 +18,13 @@ class CopyProtectionBypass {
   }
 
   setupEventListeners() {
-    chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
-  }
-
-  handleMessage(request, sender, sendResponse) {
-    if (request.action === 'toggleUnblock') {
-      this.isUnblocked = request.state;
-      if (this.isUnblocked) {
-        this.unblockAll();
-      } else {
-        this.restoreBlock();
+    chrome.runtime.onMessage.addListener((request) => {
+      if (request.action === 'toggleUnblock') {
+        this.isUnblocked = request.state;
+        this.isUnblocked ? this.unblockAll() : this.restoreBlock();
       }
-    }
+      return true;
+    });
   }
 
   unblockAll() {
@@ -44,6 +39,23 @@ class CopyProtectionBypass {
           user-select: text !important;
           pointer-events: auto !important;
         }
+        
+        *::selection {
+          background: #b3d4fc !important;
+          color: #000 !important;
+        }
+        
+        [contenteditable="false"] {
+          -webkit-user-modify: read-write !important;
+          -moz-user-modify: read-write !important;
+          user-modify: read-write !important;
+        }
+        
+        [unselectable="on"] {
+          -webkit-user-select: text !important;
+          -moz-user-select: text !important;
+          user-select: text !important;
+        }
       `;
       document.head.appendChild(styleTag);
     }
@@ -52,23 +64,25 @@ class CopyProtectionBypass {
   }
 
   setupUnblockEvents() {
-    const events = ['contextmenu', 'selectstart', 'copy', 'cut', 'paste', 'mousedown', 'mouseup', 'mousemove', 'drag', 'dragstart'];
-    events.forEach(eventName => {
-      document.addEventListener(eventName, (e) => {
+    const preventDefaultHandler = (e) => {
+      if (this.isUnblocked) {
         e.stopPropagation();
-        return true;
-      }, true);
+      }
+    };
+
+    ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'mousedown', 'mouseup', 'keydown', 'keyup'].forEach(eventType => {
+      document.addEventListener(eventType, preventDefaultHandler, true);
     });
   }
 
   restoreBlock() {
-    document.documentElement.classList.remove('unblock-all');
     const styleTag = document.getElementById('unblock-style');
     if (styleTag) {
       styleTag.remove();
     }
+    document.documentElement.classList.remove('unblock-all');
     location.reload();
   }
 }
 
-new CopyProtectionBypass(); 
+new CopyProtectionBypass();

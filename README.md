@@ -27,14 +27,14 @@
 ## Project Structure / 프로젝트 구조
 
 project-root/
-├── manifest.json     # Extension configuration
-├── popup.html       # Extension popup UI
-├── popup.js        # Popup functionality
-├── background.js   # Background service worker
-├── gesture.js      # Mouse gesture functionality
-├── unblock.js      # Copy protection bypass functionality
-├── PRIVACY.md      # Privacy policy
-└── icons/          # Extension icons
+├── manifest.json     # 확장프로그램 설정
+├── popup.html       # 팝업 UI
+├── popup.js        # 팝업 기능
+├── background.js   # 백그라운드 서비스 워커
+├── gesture.js      # 마우스 제스처 기능
+├── unblock.js      # 복사 방지 해제 기능
+├── searchModifier.js # 검색 접두어 기능
+└── icons/          # 아이콘 폴더
     ├── icon16.png
     ├── icon48.png
     └── icon128.png
