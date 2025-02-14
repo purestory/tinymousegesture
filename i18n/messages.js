@@ -5,7 +5,8 @@ window.messages = {
     copyProtectionToggle: "Copy Protection Bypass",
     searchPrefixPlaceholder: "Search Prefix",
     saveButton: "Save",
-    searchWithPrefix: "Search \"%s\""
+    searchWithPrefix: "Search \"%s\"",
+    youtubeControlText: "YouTube Skip Time (seconds)"
   },
   ko: {
     extensionName: "마우스 제스처 & 복사방지 해제",
@@ -13,7 +14,8 @@ window.messages = {
     copyProtectionToggle: "복사 방지 해제",
     searchPrefixPlaceholder: "검색어 접두어",
     saveButton: "저장",
-    searchWithPrefix: "\"%s\" 검색하기"
+    searchWithPrefix: "\"%s\" 검색하기",
+    youtubeControlText: "유튜브 스킵 시간(초)"
   },
   ja: {
     extensionName: "マウスジェスチャー & コピー保護解除",
@@ -21,7 +23,8 @@ window.messages = {
     copyProtectionToggle: "コピー保護解除",
     searchPrefixPlaceholder: "検索プレフィックス",
     saveButton: "保存",
-    searchWithPrefix: "\"%s\"を検索"
+    searchWithPrefix: "\"%s\"を検索",
+    youtubeControlText: "YouTubeスキップ時間(秒)"
   },
   zh: {
     extensionName: "鼠标手势 & 复制保护解除",
@@ -29,7 +32,8 @@ window.messages = {
     copyProtectionToggle: "解除复制保护",
     searchPrefixPlaceholder: "搜索前缀",
     saveButton: "保存",
-    searchWithPrefix: "搜索\"%s\""
+    searchWithPrefix: "搜索\"%s\"",
+    youtubeControlText: "YouTube跳转时间(秒)"
   },
   zh_TW: {
     extensionName: "滑鼠手勢 & 複製保護解除",
@@ -37,7 +41,8 @@ window.messages = {
     copyProtectionToggle: "解除複製保護",
     searchPrefixPlaceholder: "搜尋前綴",
     saveButton: "儲存",
-    searchWithPrefix: "搜尋\"%s\""
+    searchWithPrefix: "搜尋\"%s\"",
+    youtubeControlText: "YouTube跳轉時間(秒)"
   },
   es: {
     extensionName: "Gestos del Ratón & Bypass de Protección de Copia",
@@ -45,7 +50,8 @@ window.messages = {
     copyProtectionToggle: "Bypass de Protección de Copia",
     searchPrefixPlaceholder: "Prefijo de Búsqueda",
     saveButton: "Guardar",
-    searchWithPrefix: "Buscar \"%s\""
+    searchWithPrefix: "Buscar \"%s\"",
+    youtubeControlText: "Tiempo de salto de YouTube (segundos)"
   },
   fr: {
     extensionName: "Gestes de Souris & Contournement de Protection de Copie",
@@ -53,7 +59,8 @@ window.messages = {
     copyProtectionToggle: "Contourner la Protection de Copie",
     searchPrefixPlaceholder: "Préfixe de Recherche",
     saveButton: "Enregistrer",
-    searchWithPrefix: "Rechercher \"%s\""
+    searchWithPrefix: "Rechercher \"%s\"",
+    youtubeControlText: "Temps de saut YouTube (secondes)"
   },
   de: {
     extensionName: "Mausgesten & Kopierschutz-Bypass",
@@ -61,7 +68,8 @@ window.messages = {
     copyProtectionToggle: "Kopierschutz-Bypass",
     searchPrefixPlaceholder: "Suchpräfix",
     saveButton: "Speichern",
-    searchWithPrefix: "\"%s\" suchen"
+    searchWithPrefix: "\"%s\" suchen",
+    youtubeControlText: "YouTube Sprungzeit (Sekunden)"
   },
   it: {
     extensionName: "Gesti del Mouse & Bypass Protezione Copia",
@@ -69,7 +77,8 @@ window.messages = {
     copyProtectionToggle: "Bypass Protezione Copia",
     searchPrefixPlaceholder: "Prefisso di Ricerca",
     saveButton: "Salva",
-    searchWithPrefix: "Cerca \"%s\""
+    searchWithPrefix: "Cerca \"%s\"",
+    youtubeControlText: "Tempo di salto YouTube (secondi)"
   },
   pt: {
     extensionName: "Gestos do Mouse & Bypass de Proteção de Cópia",
@@ -77,7 +86,8 @@ window.messages = {
     copyProtectionToggle: "Bypass de Proteção de Cópia",
     searchPrefixPlaceholder: "Prefixo de Pesquisa",
     saveButton: "Salvar",
-    searchWithPrefix: "Pesquisar \"%s\""
+    searchWithPrefix: "Pesquisar \"%s\"",
+    youtubeControlText: "Tempo de pulo do YouTube (segundos)"
   },
   ru: {
     extensionName: "Жесты Мыши & Обход Защиты от Копирования",
@@ -85,7 +95,8 @@ window.messages = {
     copyProtectionToggle: "Обход Защиты от Копирования",
     searchPrefixPlaceholder: "Префикс Поиска",
     saveButton: "Сохранить",
-    searchWithPrefix: "Искать \"%s\""
+    searchWithPrefix: "Искать \"%s\"",
+    youtubeControlText: "Время пропуска YouTube (секунды)"
   },
   ar: {
     extensionName: "إيماءات الماوس وتجاوز حماية النسخ",
@@ -93,7 +104,8 @@ window.messages = {
     copyProtectionToggle: "تجاوز حماية النسخ",
     searchPrefixPlaceholder: "بادئة البحث",
     saveButton: "حفظ",
-    searchWithPrefix: "بحث عن \"%s\""
+    searchWithPrefix: "بحث عن \"%s\"",
+    youtubeControlText: "وقت التخطي في يوتيوب (ثواني)"
   },
   hi: {
     extensionName: "माउस जेस्चर और कॉपी प्रोटेक्शन बायपास",
@@ -101,7 +113,8 @@ window.messages = {
     copyProtectionToggle: "कॉपी प्रोटेक्शन बायपास",
     searchPrefixPlaceholder: "खोज उपसर्ग",
     saveButton: "सहेजें",
-    searchWithPrefix: "\"%s\" खोजें"
+    searchWithPrefix: "\"%s\" खोजें",
+    youtubeControlText: "यूट्यूब स्किप टाइम (सेकंड)"
   },
   vi: {
     extensionName: "Cử Chỉ Chuột & Bỏ Qua Bảo Vệ Sao Chép",
@@ -109,7 +122,8 @@ window.messages = {
     copyProtectionToggle: "Bỏ Qua Bảo Vệ Sao Chép",
     searchPrefixPlaceholder: "Tiền Tố Tìm Kiếm",
     saveButton: "Lưu",
-    searchWithPrefix: "Tìm kiếm \"%s\""
+    searchWithPrefix: "Tìm kiếm \"%s\"",
+    youtubeControlText: "Thời gian nhảy YouTube (giây)"
   },
   th: {
     extensionName: "ท่าทางเมาส์ & บายพาสการป้องกันการคัดลอก",
@@ -117,7 +131,8 @@ window.messages = {
     copyProtectionToggle: "บายพาสการป้องกันการคัดลอก",
     searchPrefixPlaceholder: "คำนำหน้าการค้นหา",
     saveButton: "บันทึก",
-    searchWithPrefix: "ค้นหา \"%s\""
+    searchWithPrefix: "ค้นหา \"%s\"",
+    youtubeControlText: "เวลาข้าม YouTube (วินาที)"
   },
   id: {
     extensionName: "Gestur Mouse & Bypass Proteksi Salin",
@@ -125,7 +140,8 @@ window.messages = {
     copyProtectionToggle: "Bypass Proteksi Salin",
     searchPrefixPlaceholder: "Awalan Pencarian",
     saveButton: "Simpan",
-    searchWithPrefix: "Cari \"%s\""
+    searchWithPrefix: "Cari \"%s\"",
+    youtubeControlText: "YouTube Skip Time (seconds)"
   },
   tr: {
     extensionName: "Fare Hareketleri & Kopya Koruması Bypass",
@@ -133,7 +149,8 @@ window.messages = {
     copyProtectionToggle: "Kopya Koruması Bypass",
     searchPrefixPlaceholder: "Arama Öneki",
     saveButton: "Kaydet",
-    searchWithPrefix: "\"%s\" ara"
+    searchWithPrefix: "\"%s\" ara",
+    youtubeControlText: "YouTube Skip Time (seconds)"
   },
   pl: {
     extensionName: "Gesty Myszy & Obejście Ochrony Kopiowania",
@@ -141,7 +158,8 @@ window.messages = {
     copyProtectionToggle: "Obejście Ochrony Kopiowania",
     searchPrefixPlaceholder: "Prefiks Wyszukiwania",
     saveButton: "Zapisz",
-    searchWithPrefix: "Szukaj \"%s\""
+    searchWithPrefix: "Szukaj \"%s\"",
+    youtubeControlText: "YouTube Skip Time (seconds)"
   },
   nl: {
     extensionName: "Muisgebaren & Kopieerbeveiliging Bypass",
@@ -149,7 +167,8 @@ window.messages = {
     copyProtectionToggle: "Kopieerbeveiliging Bypass",
     searchPrefixPlaceholder: "Zoekvoorvoegsel",
     saveButton: "Opslaan",
-    searchWithPrefix: "Zoek \"%s\""
+    searchWithPrefix: "Zoek \"%s\"",
+    youtubeControlText: "YouTube Skip Time (seconds)"
   },
   cs: {
     extensionName: "Gesta Myši & Obejití Ochrany Kopírování",
@@ -157,6 +176,7 @@ window.messages = {
     copyProtectionToggle: "Obejít Ochranu Kopírování",
     searchPrefixPlaceholder: "Prefix Vyhledávání",
     saveButton: "Uložit",
-    searchWithPrefix: "Hledat \"%s\""
+    searchWithPrefix: "Hledat \"%s\"",
+    youtubeControlText: "YouTube Skip Time (seconds)"
   }
 }; 

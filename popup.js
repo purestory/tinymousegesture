@@ -22,10 +22,12 @@ class PopupManager {
       const lang = (navigator.language || navigator.userLanguage).split('-')[0];
       const texts = window.messages[lang] || window.messages.en;
       
+      document.getElementById('extensionTitle').textContent = texts.extensionName;
       document.getElementById('copyProtectionText').textContent = texts.copyProtectionToggle;
       this.searchPrefix.placeholder = texts.searchPrefixPlaceholder;
       this.saveButton.textContent = texts.saveButton;
       this.skipTimeSaveButton.textContent = texts.saveButton;
+      document.getElementById('youtubeControlText').textContent = texts.youtubeControlText;
       
       this.saveButton.disabled = true;
       this.skipTimeSaveButton.disabled = true;

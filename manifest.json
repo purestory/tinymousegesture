@@ -7,7 +7,6 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "contextMenus",
     "storage"
   ],
   "action": {
@@ -16,7 +15,9 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "tiny mouse gesture & etc.",
+    "default_description": "Lightweight mouse gestures, copy protection bypass, and quick search."
   },
   "background": {
     "service_worker": "background.js",
