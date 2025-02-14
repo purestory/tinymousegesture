@@ -24,6 +24,14 @@
 - 선택한 텍스트에 접두어 추가 검색
 - 우클릭 메뉴 통합
 
+### 4. Youtube Control / 유튜브 컨트롤
+- Add forward/backward buttons to YouTube player
+- Customizable skip time (1-60 seconds)
+- Settings auto-save
+- 유튜브 플레이어에 앞/뒤로 이동 버튼 추가
+- 스킵 시간 설정 가능 (1-60초)
+- 설정 상태 자동 저장
+
 ## Installation / 설치 방법
 
 1. Download from Chrome Web Store (Coming Soon)

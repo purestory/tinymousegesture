@@ -9,10 +9,15 @@ class PopupManager {
 
   async initialize() {
     try {
-      const data = await chrome.storage.local.get(['isUnblocked', 'searchPrefix']);
+      const data = await chrome.storage.local.get(['isUnblocked', 'searchPrefix', 'youtubeSkipTime']);
       this.toggleSwitch.checked = data.isUnblocked;
       this.searchPrefix.value = data.searchPrefix || '';
       this.lastSavedPrefix = data.searchPrefix || '';
+      
+      this.skipTimeInput = document.getElementById('skipTimeInput');
+      this.skipTimeSaveButton = document.getElementById('skipTimeSaveButton');
+      this.skipTimeInput.value = data.youtubeSkipTime || 5;
+      this.lastSavedSkipTime = data.youtubeSkipTime || 5;
       
       const lang = (navigator.language || navigator.userLanguage).split('-')[0];
       const texts = window.messages[lang] || window.messages.en;
@@ -20,8 +25,10 @@ class PopupManager {
       document.getElementById('copyProtectionText').textContent = texts.copyProtectionToggle;
       this.searchPrefix.placeholder = texts.searchPrefixPlaceholder;
       this.saveButton.textContent = texts.saveButton;
+      this.skipTimeSaveButton.textContent = texts.saveButton;
       
       this.saveButton.disabled = true;
+      this.skipTimeSaveButton.disabled = true;
       this.setupEventListeners();
     } catch (error) {
       console.error('초기화 오류:', error);
@@ -32,6 +39,8 @@ class PopupManager {
     this.toggleSwitch.addEventListener('change', this.handleToggleChange.bind(this));
     this.searchPrefix.addEventListener('input', this.handlePrefixInput.bind(this));
     this.saveButton.addEventListener('click', this.handlePrefixSave.bind(this));
+    this.skipTimeInput.addEventListener('input', this.handleSkipTimeInput.bind(this));
+    this.skipTimeSaveButton.addEventListener('click', this.handleSkipTimeSave.bind(this));
   }
 
   handlePrefixInput(e) {
@@ -100,19 +109,12 @@ class PopupManager {
     }
   }
   
-  async initializeYoutubeControl() {
-    const data = await chrome.storage.local.get('youtubeSkipTime');
-    this.skipTimeInput = document.getElementById('skipTimeInput');
-    this.skipTimeSaveButton = document.getElementById('skipTimeSaveButton');
-    this.skipTimeInput.value = data.youtubeSkipTime || 5;
-    
-    this.skipTimeInput.addEventListener('input', this.handleSkipTimeInput.bind(this));
-    this.skipTimeSaveButton.addEventListener('click', this.handleSkipTimeSave.bind(this));
-  }
-  
   handleSkipTimeInput(e) {
     const value = parseInt(e.target.value);
-    this.skipTimeSaveButton.disabled = !value || value < 1 || value > 60;
+    const isValid = value && value >= 1 && value <= 60;
+    const isDifferent = value !== this.lastSavedSkipTime;
+    
+    this.skipTimeSaveButton.disabled = !isValid || !isDifferent;
     
     if (!this.skipTimeSaveButton.disabled) {
       this.skipTimeSaveButton.style.background = '#4285f4';
@@ -127,11 +129,19 @@ class PopupManager {
     const skipTime = parseInt(this.skipTimeInput.value);
     if (!skipTime || skipTime < 1 || skipTime > 60) return;
     
+    this.skipTimeSaveButton.disabled = true;
+    this.skipTimeSaveButton.style.background = '#cccccc';
+    this.skipTimeSaveButton.style.cursor = 'not-allowed';
+    
     try {
       await chrome.storage.local.set({ youtubeSkipTime: skipTime });
+      this.lastSavedSkipTime = skipTime;
       setTimeout(() => window.close(), this.POPUP_CLOSE_DELAY);
     } catch (error) {
       console.error('스킵 시간 저장 오류:', error);
+      this.skipTimeSaveButton.disabled = false;
+      this.skipTimeSaveButton.style.background = '#4285f4';
+      this.skipTimeSaveButton.style.cursor = 'pointer';
     }
   }
   
