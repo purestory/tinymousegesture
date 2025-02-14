@@ -3,6 +3,7 @@
   "name": "tiny mouse gesture & etc.",
   "version": "1.3",
   "description": "Lightweight mouse gestures, copy protection bypass, and quick search.",
+  "homepage_url": "https://github.com/purestory/tinymousegesture",
   "permissions": [
     "tabs",
     "activeTab",

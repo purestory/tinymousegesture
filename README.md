@@ -1,4 +1,4 @@
-# Tiny Mouse Gesture & etc.
+# tiny mouse gesture & etc.
 > A lightweight Chrome extension for mouse gestures, copy protection bypass, and quick search. Focused on essential features for optimal performance.
 
 # 타이니 마우스 제스처
