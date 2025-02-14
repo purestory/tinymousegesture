@@ -69,18 +69,19 @@ class PopupManager {
     
     try {
       await chrome.storage.local.set({ searchPrefix: prefix });
+      await chrome.runtime.sendMessage({
+        action: 'updateSearchPrefix',
+        prefix: prefix
+      });
+      
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       if (tab?.id) {
-        const response = await chrome.tabs.sendMessage(tab.id, {
-          action: 'getCurrentSelection'
-        });
-        
-        await chrome.runtime.sendMessage({
+        chrome.tabs.sendMessage(tab.id, {
           action: 'updateSearchPrefix',
-          prefix: prefix,
-          text: response?.selectedText || ''
+          prefix: prefix
         });
       }
+      
       this.lastSavedPrefix = prefix;
       setTimeout(() => window.close(), this.POPUP_CLOSE_DELAY);
     } catch (error) {
