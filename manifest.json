@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Mouse Gesture & Copy Protection Bypass",
   "version": "1.0",
-  "description": "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight.",
+  "description": "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight extension.",
   "permissions": [
     "tabs",
     "activeTab",
@@ -18,7 +18,8 @@
     "default_popup": "popup.html"
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "icons": {
     "16": "icons/icon16.png",
@@ -28,7 +29,11 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["gesture.js", "unblock.js", "searchModifier.js"]
+      "js": ["i18n/messages.js", "gesture.js", "unblock.js", "searchModifier.js"]
     }
-  ]
+  ],
+  "web_accessible_resources": [{
+    "resources": ["i18n/messages.js"],
+    "matches": ["<all_urls>"]
+  }]
 }

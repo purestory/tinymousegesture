@@ -21,7 +21,11 @@ class CopyProtectionBypass {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.action === 'toggleUnblock') {
         this.isUnblocked = request.state;
-        this.isUnblocked ? this.unblockAll() : this.restoreBlock();
+        if (this.isUnblocked) {
+          this.unblockAll();
+        } else {
+          this.restoreBlock();
+        }
         sendResponse({ success: true });
       }
       return true;
@@ -40,40 +44,23 @@ class CopyProtectionBypass {
           user-select: text !important;
           pointer-events: auto !important;
         }
-        
-        *::selection {
-          background: #b3d4fc !important;
-          color: #000 !important;
-        }
-        
-        [contenteditable="false"] {
-          -webkit-user-modify: read-write !important;
-          -moz-user-modify: read-write !important;
-          user-modify: read-write !important;
-        }
-        
-        [unselectable="on"] {
-          -webkit-user-select: text !important;
-          -moz-user-select: text !important;
-          user-select: text !important;
-        }
       `;
       document.head.appendChild(styleTag);
     }
-    document.documentElement.classList.add('unblock-all');
-    this.setupUnblockEvents();
-  }
 
-  setupUnblockEvents() {
-    const preventDefaultHandler = (e) => {
-      if (this.isUnblocked) {
+    const events = ['contextmenu', 'selectstart', 'copy', 'cut', 'paste', 'mousedown', 'mouseup'];
+    events.forEach(eventName => {
+      document.addEventListener(eventName, (e) => {
+        if (e.type === 'mousedown' && e.button === 2) {
+          return true;
+        }
         e.stopPropagation();
-      }
-    };
-
-    ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'mousedown', 'mouseup', 'keydown', 'keyup'].forEach(eventType => {
-      document.addEventListener(eventType, preventDefaultHandler, true);
+        e.stopImmediatePropagation();
+        return true;
+      }, true);
     });
+
+    document.documentElement.classList.add('unblock-all');
   }
 
   restoreBlock() {

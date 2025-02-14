@@ -1,3 +1,14 @@
+const messages = {
+  en: {
+    copyProtectionToggle: "Copy Protection Bypass",
+    searchWithPrefix: "Search \"%s\""
+  },
+  ko: {
+    copyProtectionToggle: "복사 방지 해제",
+    searchWithPrefix: "\"%s\" 검색하기"
+  }
+};
+
 class BackgroundManager {
   constructor() {
     this.currentState = { isUnblocked: false };
@@ -8,41 +19,30 @@ class BackgroundManager {
 
   setupMenus() {
     const createContextMenus = () => {
+      const lang = (navigator.language || 'en').split('-')[0];
+      const texts = messages[lang] || messages.en;
+
       chrome.contextMenus.removeAll(() => {
         chrome.contextMenus.create({
           id: "toggleUnblock",
-          title: this.currentState.isUnblocked ? "복사 방지 해제 ✓" : "복사 방지 해제",
+          title: this.currentState.isUnblocked ? 
+            texts.copyProtectionToggle + " ✓" : 
+            texts.copyProtectionToggle,
           contexts: ["action"]
-        }, () => {
-          if (chrome.runtime.lastError) {
-            console.log('toggleUnblock 메뉴 생성 오류:', chrome.runtime.lastError);
-          }
         });
 
         chrome.contextMenus.create({
           id: 'searchWithPrefix',
-          title: '"%s" 검색하기',
+          title: texts.searchWithPrefix.replace('%s', ''),
           contexts: ['selection']
-        }, () => {
-          if (chrome.runtime.lastError) {
-            console.log('searchWithPrefix 메뉴 생성 오류:', chrome.runtime.lastError);
-          }
         });
       });
     };
 
-    chrome.storage.local.get(['isUnblocked', 'searchPrefix'], (data) => {
+    chrome.storage.local.get(['isUnblocked', 'searchPrefix']).then(data => {
       this.currentState.isUnblocked = data.isUnblocked || false;
       this.currentPrefix = data.searchPrefix || '';
       createContextMenus();
-    });
-
-    chrome.runtime.onInstalled.addListener(() => {
-      chrome.storage.local.get(['isUnblocked', 'searchPrefix'], (data) => {
-        this.currentState.isUnblocked = data.isUnblocked || false;
-        this.currentPrefix = data.searchPrefix || '';
-        createContextMenus();
-      });
     });
   }
 
@@ -80,12 +80,15 @@ class BackgroundManager {
 
   updateSearchMenu(selectedText) {
     if (!selectedText) return;
+    const lang = (navigator.language || 'en').split('-')[0];
+    const texts = messages[lang] || messages.en;
+    
     const searchText = this.currentPrefix ? 
       `${this.currentPrefix} ${selectedText}` : 
       selectedText;
     
     chrome.contextMenus.update('searchWithPrefix', {
-      title: `"${searchText}" 검색하기`
+      title: texts.searchWithPrefix.replace('%s', searchText)
     });
   }
 
@@ -93,8 +96,13 @@ class BackgroundManager {
     this.currentState.isUnblocked = !this.currentState.isUnblocked;
     await chrome.storage.local.set({ isUnblocked: this.currentState.isUnblocked });
     
+    const lang = (navigator.language || 'en').split('-')[0];
+    const texts = messages[lang] || messages.en;
+ 
     chrome.contextMenus.update("toggleUnblock", {
-      title: this.currentState.isUnblocked ? "복사 방지 해제 ✓" : "복사 방지 해제"
+      title: this.currentState.isUnblocked ? 
+        texts.copyProtectionToggle + " ✓" : 
+        texts.copyProtectionToggle
     });
 
     if (tab?.id) {

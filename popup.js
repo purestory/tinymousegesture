@@ -1,8 +1,8 @@
 class PopupManager {
   constructor() {
-    this.toggleSwitch = document.getElementById('toggleProtection');
+    this.toggleSwitch = document.getElementById('toggleSwitch');
     this.searchPrefix = document.getElementById('searchPrefix');
-    this.saveButton = document.getElementById('savePrefix');
+    this.saveButton = document.getElementById('saveButton');
     this.POPUP_CLOSE_DELAY = 500;
     this.initialize();
   }
@@ -13,6 +13,13 @@ class PopupManager {
       this.toggleSwitch.checked = data.isUnblocked;
       this.searchPrefix.value = data.searchPrefix || '';
       this.lastSavedPrefix = data.searchPrefix || '';
+      
+      const lang = (navigator.language || navigator.userLanguage).split('-')[0];
+      const texts = window.messages[lang] || window.messages.en;
+      
+      document.getElementById('copyProtectionText').textContent = texts.copyProtectionToggle;
+      this.searchPrefix.placeholder = texts.searchPrefixPlaceholder;
+      this.saveButton.textContent = texts.saveButton;
       
       this.saveButton.disabled = true;
       this.setupEventListeners();
@@ -29,7 +36,16 @@ class PopupManager {
 
   handlePrefixInput(e) {
     const currentValue = e.target.value.trim();
-    this.saveButton.disabled = !currentValue || currentValue === this.lastSavedPrefix;
+    const shouldEnable = currentValue && currentValue !== this.lastSavedPrefix;
+    this.saveButton.disabled = !shouldEnable;
+    
+    if (shouldEnable) {
+      this.saveButton.style.background = '#4285f4';
+      this.saveButton.style.cursor = 'pointer';
+    } else {
+      this.saveButton.style.background = '#cccccc';
+      this.saveButton.style.cursor = 'not-allowed';
+    }
   }
 
   async handlePrefixSave() {
@@ -37,6 +53,8 @@ class PopupManager {
     if (!prefix) return;
     
     this.saveButton.disabled = true;
+    this.saveButton.style.background = '#cccccc';
+    this.saveButton.style.cursor = 'not-allowed';
     
     try {
       await chrome.storage.local.set({ searchPrefix: prefix });
@@ -57,6 +75,8 @@ class PopupManager {
     } catch (error) {
       console.error('접두어 저장 오류:', error);
       this.saveButton.disabled = false;
+      this.saveButton.style.background = '#4285f4';
+      this.saveButton.style.cursor = 'pointer';
     }
   }
 
