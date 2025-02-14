@@ -7,47 +7,93 @@
       width: 300px;
       padding: 15px;
       font-family: Arial, sans-serif;
+      margin: 0;
     }
-    .toggle-container {
+    .menu-item {
+      padding: 10px;
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
     }
-    #copyProtectionText {
-      margin-left: 10px;
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 20px;
     }
-    .search-container {
-      margin-top: 15px;
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
     }
-    #searchPrefix {
-      width: 100%;
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .3s;
+      border-radius: 20px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #4285f4;
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    .search-prefix {
+      margin-top: 10px;
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .search-prefix input {
+      flex: 1;
       padding: 8px;
-      margin-bottom: 10px;
-      box-sizing: border-box;
+      border: 1px solid #ddd;
+      border-radius: 4px;
     }
-    #saveButton {
-      width: 100%;
-      padding: 8px;
+    .save-button {
+      padding: 8px 16px;
       background: #4285f4;
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      white-space: nowrap;
     }
-    #saveButton:disabled {
+    .save-button:disabled {
       background: #cccccc;
       cursor: not-allowed;
     }
   </style>
 </head>
 <body>
-  <div class="toggle-container">
-    <input type="checkbox" id="toggleSwitch">
-    <span id="copyProtectionText"></span>
+  <div class="menu-item">
+    <span id="copyProtectionText">복사 방지 해제</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="toggleSwitch">
+      <span class="slider"></span>
+    </label>
   </div>
-  <div class="search-container">
-    <input type="text" id="searchPrefix">
-    <button id="saveButton"></button>
+  <div class="search-prefix">
+    <input type="text" id="searchPrefix" placeholder="검색 접두어">
+    <button id="saveButton" class="save-button">저장</button>
   </div>
   <script src="i18n/messages.js"></script>
   <script src="popup.js"></script>

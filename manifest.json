@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Mouse Gesture & Copy Protection Bypass",
-  "version": "1.0",
-  "description": "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight extension.",
+  "name": "tiny mouse gesture & etc.",
+  "version": "1.3",
+  "description": "Lightweight mouse gestures, copy protection bypass, and quick search.",
   "permissions": [
     "tabs",
     "activeTab",

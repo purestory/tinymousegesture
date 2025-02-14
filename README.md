@@ -1,8 +1,64 @@
-# Mouse Gesture & Copy Protection Bypass
-> A lightweight and fast Chrome extension that enables mouse gestures for web page navigation and bypasses copy protection on websites. Focused solely on essential features for optimal performance and speed.
+# Tiny Mouse Gesture & etc.
+> A lightweight Chrome extension for mouse gestures, copy protection bypass, and quick search. Focused on essential features for optimal performance.
 
-# 마우스 제스처 & 복사방지 해제
-> 마우스 제스처로 웹 페이지를 앞뒤로 이동하고, 복사 방지된 사이트에서도 자유롭게 콘텐츠를 복사할 수 있는 크롬 확장프로그램입니다. 불필요한 기능을 제외하고 핵심 기능에만 집중하여 가볍고 빠른 실행 속도를 제공합니다.
+# 타이니 마우스 제스처
+> 마우스 제스처, 복사 방지 해제, 빠른 검색 기능을 제공하는 가벼운 크롬 확장프로그램입니다. 핵심 기능에만 집중하여 최적의 성능을 제공합니다.
+
+## Features / 기능
+
+### 1. Mouse Gesture / 마우스 제스처
+- Right-click drag left/right for back/forward navigation
+- Visual feedback with arrow indicators
+- 오른쪽 클릭 후 좌우 드래그로 페이지 앞뒤 이동
+- 화살표 표시로 직관적인 사용
+
+### 2. Copy Protection Bypass / 복사 방지 해제
+- Enable text selection and copying
+- Toggle feature with one click
+- 텍스트 선택 및 복사 가능
+- 원클릭으로 기능 켜고 끄기
+
+### 3. Quick Search / 빠른 검색
+- Custom prefix for selected text search
+- Right-click menu integration
+- 선택한 텍스트에 접두어 추가 검색
+- 우클릭 메뉴 통합
+
+## Installation / 설치 방법
+
+1. Download from Chrome Web Store (Coming Soon)
+   크롬 웹 스토어에서 다운로드 (준비 중)
+
+2. Manual Installation / 수동 설치
+   ```bash
+   git clone https://github.com/purestory/tiny-mouse-gesture.git
+   ```
+   - Open Chrome Extensions (chrome://extensions/)
+   - Enable Developer Mode
+   - Load unpacked extension
+   - Select the cloned directory
+
+## Tech Stack / 기술 스택
+- Pure JavaScript (No dependencies)
+- Chrome Extension APIs
+- CSS3 for visual effects
+
+## Browser Support / 브라우저 지원
+- Chrome 88+
+- Edge 88+ (Chromium-based)
+
+## Multi-language Support / 다국어 지원
+- English
+- 한국어
+- 日本語
+- 中文(简体)
+- 中文(繁體)
+
+## License / 라이선스
+MIT License
+
+## Author / 작성자
+purestory (https://github.com/purestory)
 
 ## Key Features / 주요 기능
 
@@ -40,17 +96,6 @@ project-root/
 ├── icon48.png # Medium icon / 중간 아이콘
 └── icon128.png # Large icon / 큰 아이콘
 
-## Installation / 설치 방법
-
-1. Clone or download this repository / 이 저장소를 클론하거나 다운로드
-   ```bash
-   git clone https://github.com/purestory/mouse-gesture-navigation.git
-   ```
-2. Go to `chrome://extensions` in Chrome browser / 크롬 브라우저에서 `chrome://extensions` 접속
-3. Enable "Developer mode" / "개발자 모드" 활성화
-4. Click "Load unpacked extension" / "압축해제된 확장 프로그램을 로드합니다." 클릭
-5. Select the downloaded folder / 다운로드한 폴더 선택
-
 ## How to Use / 사용 방법
 
 ### Gesture Navigation / 제스처 네비게이션
@@ -74,22 +119,6 @@ project-root/
 - Enhanced usability with copy protection bypass
 - Automatic settings persistence
 - Extension icons in 16x16, 48x48, 128x128 sizes
-
-## Tech Stack / 기술 스택
-
-- JavaScript (ES6+)
-- Chrome Extension Manifest V3
-- Chrome APIs (Storage, Tabs, Context Menus)
-- Shadow DOM for isolated styles
-- CSS3 Animations
-
-## Developer / 개발자
-
-[@purestory](https://github.com/purestory)
-
-## License / 라이선스
-
-MIT License
 
 ## Privacy / 개인정보 보호
 This extension does not collect or transmit any personal data. See [PRIVACY.md](PRIVACY.md) for details.

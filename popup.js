@@ -93,7 +93,7 @@ class PopupManager {
           }, resolve);
         });
       }
-      window.close();
+      setTimeout(() => window.close(), 300);
     } catch (error) {
       console.error('상태 변경 오류:', error);
       e.target.checked = !newState;
