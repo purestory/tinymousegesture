@@ -2,12 +2,12 @@
   "manifest_version": 3,
   "name": "tiny mouse gesture & etc.",
   "version": "1.4",
-  "description": "Lightweight mouse gestures, copy protection bypass, and quick search.",
+  "description": "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight extension.",
   "homepage_url": "https://github.com/purestory/tinymousegesture",
   "permissions": [
-    "tabs",
-    "activeTab",
-    "storage"
+    "storage",
+    "contextMenus",
+    "tabs"
   ],
   "action": {
     "default_icon": {
@@ -31,11 +31,19 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["i18n/messages.js", "gesture.js", "unblock.js", "searchModifier.js"]
+      "js": ["unblock.js"],
+      "run_at": "document_start",
+      "type": "module"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["gesture.js"],
+      "type": "module"
     },
     {
       "matches": ["*://*.youtube.com/*"],
-      "js": ["youtubeControl.js"]
+      "js": ["youtubeControl.js"],
+      "type": "module"
     }
   ],
   "web_accessible_resources": [{

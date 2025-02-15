@@ -1,4 +1,4 @@
-window.messages = {
+export const messages = {
   en: {
     extensionName: "Mouse Gesture & Copy Protection Bypass",
     extensionDescription: "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight extension.",
@@ -6,7 +6,9 @@ window.messages = {
     searchPrefixPlaceholder: "Search Prefix",
     saveButton: "Save",
     searchWithPrefix: "Search \"%s\"",
-    youtubeControlText: "YouTube Skip Time (seconds)"
+    youtubeControlText: "YouTube Skip Time (seconds)",
+    gestureBack: "Back",
+    gestureForward: "Forward"
   },
   ko: {
     extensionName: "마우스 제스처 & 복사방지 해제",
@@ -15,7 +17,9 @@ window.messages = {
     searchPrefixPlaceholder: "검색어 접두어",
     saveButton: "저장",
     searchWithPrefix: "\"%s\" 검색하기",
-    youtubeControlText: "유튜브 스킵 시간(초)"
+    youtubeControlText: "유튜브 스킵 시간(초)",
+    gestureBack: "뒤로",
+    gestureForward: "앞으로"
   },
   ja: {
     extensionName: "マウスジェスチャー & コピー保護解除",
@@ -24,7 +28,9 @@ window.messages = {
     searchPrefixPlaceholder: "検索プレフィックス",
     saveButton: "保存",
     searchWithPrefix: "\"%s\"を検索",
-    youtubeControlText: "YouTubeスキップ時間(秒)"
+    youtubeControlText: "YouTubeスキップ時間(秒)",
+    gestureBack: "戻る",
+    gestureForward: "進む"
   },
   zh: {
     extensionName: "鼠标手势 & 复制保护解除",
@@ -33,7 +39,9 @@ window.messages = {
     searchPrefixPlaceholder: "搜索前缀",
     saveButton: "保存",
     searchWithPrefix: "搜索\"%s\"",
-    youtubeControlText: "YouTube跳转时间(秒)"
+    youtubeControlText: "YouTube跳转时间(秒)",
+    gestureBack: "后退",
+    gestureForward: "前进"
   },
   zh_TW: {
     extensionName: "滑鼠手勢 & 複製保護解除",
@@ -179,4 +187,9 @@ window.messages = {
     searchWithPrefix: "Hledat \"%s\"",
     youtubeControlText: "YouTube Skip Time (seconds)"
   }
-}; 
+};
+
+// 브라우저 환경용
+if (typeof window !== 'undefined') {
+  window.messages = messages;
+} 

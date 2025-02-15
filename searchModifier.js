@@ -1,3 +1,5 @@
+import { messages } from './i18n/messages.js';
+
 class SearchModifier {
     constructor() {
       this.prefix = '';

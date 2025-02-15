@@ -6,7 +6,35 @@ class GestureNavigator {
     this.startY = 0;
     this.dragDistance = 0;
     this.skipContextMenu = false;
-    this.texts = this.getLocalizedTexts();
+    this.container = null;
+    this.texts = {
+      back: '뒤로',
+      forward: '앞으로'
+    };
+    
+    this.init();
+  }
+
+  async init() {
+    try {
+      const response = await fetch(chrome.runtime.getURL('i18n/messages.js'));
+      const text = await response.text();
+      
+      const messagesMatch = text.match(/export const messages = ({[\s\S]*});/);
+      if (messagesMatch) {
+        const messagesObj = JSON.parse(messagesMatch[1].replace(/(\w+):/g, '"$1":'));
+        const lang = (navigator.language || navigator.userLanguage).split('-')[0];
+        const texts = messagesObj[lang] || messagesObj.en;
+        
+        this.texts = {
+          back: texts.gestureBack,
+          forward: texts.gestureForward
+        };
+      }
+    } catch (error) {
+      console.error('제스처 초기화 오류:', error);
+    }
+    
     this.setupGestureUI();
     this.setupEventListeners();
   }
@@ -109,6 +137,7 @@ class GestureNavigator {
       this.isGesturing = true;
       this.startX = e.clientX;
       this.startY = e.clientY;
+      document.documentElement.classList.add('dragging');
     }
   }
 
@@ -135,8 +164,6 @@ class GestureNavigator {
     
     const deltaX = e.clientX - this.startX;
     if (Math.abs(deltaX) > 100) {
-      e.preventDefault();
-      e.stopPropagation();
       if (deltaX < 0) {
         history.back();
       } else {
@@ -144,7 +171,9 @@ class GestureNavigator {
       }
       this.skipContextMenu = true;
     }
+    
     this.isGesturing = false;
+    document.documentElement.classList.remove('dragging');
     this.resetGestureState();
   }
 
@@ -157,16 +186,9 @@ class GestureNavigator {
 
   resetGestureState() {
     this.dragDistance = 0;
-    document.documentElement.classList.remove('dragging');
     this.container.classList.remove('visible', 'arrow-left', 'arrow-right');
-  }
-
-  getLocalizedTexts() {
-    return {
-      back: chrome.i18n.getMessage('gestureBack') || '뒤로',
-      forward: chrome.i18n.getMessage('gestureForward') || '앞으로'
-    };
   }
 }
 
+// 초기화
 new GestureNavigator();

@@ -1,3 +1,5 @@
+import { messages } from './i18n/messages.js';
+
 class PopupManager {
   constructor() {
     this.toggleSwitch = document.getElementById('toggleSwitch');
@@ -9,6 +11,11 @@ class PopupManager {
 
   async initialize() {
     try {
+      if (!chrome.runtime?.id) {
+        console.error('확장프로그램 컨텍스트를 찾을 수 없습니다.');
+        return;
+      }
+
       const data = await chrome.storage.local.get(['isUnblocked', 'searchPrefix', 'youtubeSkipTime']);
       this.toggleSwitch.checked = data.isUnblocked;
       this.searchPrefix.value = data.searchPrefix || '';
@@ -20,7 +27,7 @@ class PopupManager {
       this.lastSavedSkipTime = data.youtubeSkipTime || 5;
       
       const lang = (navigator.language || navigator.userLanguage).split('-')[0];
-      const texts = window.messages[lang] || window.messages.en;
+      const texts = messages[lang] || messages.en;
       
       document.getElementById('extensionTitle').textContent = texts.extensionName;
       document.getElementById('copyProtectionText').textContent = texts.copyProtectionToggle;
@@ -97,13 +104,22 @@ class PopupManager {
     try {
       await chrome.storage.local.set({ isUnblocked: newState });
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      
       if (tab?.id) {
-        await new Promise((resolve) => {
-          chrome.tabs.sendMessage(tab.id, {
+        try {
+          await chrome.tabs.sendMessage(tab.id, {
             action: 'toggleUnblock',
             state: newState
-          }, resolve);
-        });
+          });
+          // 상태 변경 후 항상 새로고침
+          await chrome.tabs.reload(tab.id);
+        } catch (error) {
+          if (error.message.includes('Receiving end does not exist')) {
+            await chrome.tabs.reload(tab.id);
+          } else {
+            throw error;
+          }
+        }
       }
       setTimeout(() => window.close(), 300);
     } catch (error) {
@@ -150,4 +166,6 @@ class PopupManager {
   
 }
 
-new PopupManager();
+document.addEventListener('DOMContentLoaded', () => {
+  new PopupManager();
+});
