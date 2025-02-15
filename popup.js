@@ -31,6 +31,7 @@ class PopupManager {
       
       document.getElementById('extensionTitle').textContent = texts.extensionName;
       document.getElementById('copyProtectionText').textContent = texts.copyProtectionToggle;
+      document.getElementById('searchPrefixText').textContent = texts.searchPrefixPlaceholder;
       this.searchPrefix.placeholder = texts.searchPrefixPlaceholder;
       this.saveButton.textContent = texts.saveButton;
       this.skipTimeSaveButton.textContent = texts.saveButton;
