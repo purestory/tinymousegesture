@@ -6,7 +6,8 @@ class BackgroundManager {
     this.currentState = { isUnblocked: false };
     this.currentPrefix = '';
     this.setupListeners();
-    this.setupContextMenu();
+    this.setupContextMenus();
+    this.setupMessageListeners();
   }
 
   setupListeners() {
@@ -34,31 +35,44 @@ class BackgroundManager {
     });
   }
 
-  setupContextMenu() {
-    chrome.contextMenus.removeAll(() => {
-      chrome.contextMenus.create({
-        id: 'searchWithPrefix',
-        title: getMessage('searchWithPrefix').replace('%s', this.currentPrefix ? `${this.currentPrefix} "%s"` : '"%s"'),
-        contexts: ['selection']
-      });
+  setupContextMenus() {
+    chrome.contextMenus.create({
+      id: 'searchWithPrefix',
+      title: '"%s" 검색하기',
+      contexts: ['selection']
     });
 
-    // 기존 리스너 제거
-    if (this.contextMenuListener) {
-      chrome.contextMenus.onClicked.removeListener(this.contextMenuListener);
-    }
-
-    // 새로운 리스너 등록
-    this.contextMenuListener = (info, tab) => {
-      if (info.menuItemId === 'searchWithPrefix' && info.selectionText) {
-        const searchText = info.selectionText.trim();
-        const prefix = this.currentPrefix ? this.currentPrefix + ' ' : '';
-        const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(prefix + searchText)}`;
-        chrome.tabs.create({ url: searchUrl });
+    chrome.contextMenus.onClicked.addListener((info, tab) => {
+      if (info.menuItemId === 'searchWithPrefix') {
+        this.handlePrefixSearch(info.selectionText);
       }
-    };
+    });
+  }
 
-    chrome.contextMenus.onClicked.addListener(this.contextMenuListener);
+  setupMessageListeners() {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.action === 'getSelectedText') {
+        chrome.tabs.sendMessage(sender.tab.id, { action: 'getCurrentSelection' }, 
+          response => {
+            if (response && response.selectedText) {
+              this.handlePrefixSearch(response.selectedText);
+            }
+          }
+        );
+      }
+      return true;
+    });
+  }
+
+  async handlePrefixSearch(text) {
+    try {
+      const { searchPrefix } = await chrome.storage.local.get('searchPrefix');
+      const prefix = searchPrefix || '';
+      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(prefix + ' ' + text)}`;
+      chrome.tabs.create({ url: searchUrl });
+    } catch (error) {
+      console.error('검색 처리 오류:', error);
+    }
   }
 
   updateContextMenu() {
@@ -66,7 +80,7 @@ class BackgroundManager {
       title: getMessage('searchWithPrefix').replace('%s', this.currentPrefix ? `${this.currentPrefix} "%s"` : '"%s"')
     }, () => {
       if (chrome.runtime.lastError) {
-        this.setupContextMenu();
+        this.setupContextMenus();
       }
     });
   }

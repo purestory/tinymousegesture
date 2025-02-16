@@ -52,7 +52,18 @@
     }
   ],
   "web_accessible_resources": [{
-    "resources": ["i18n/messages.js"],
-    "matches": ["<all_urls>"]
-  }]
+    "resources": [
+      "i18n/messages.js",
+      "icons/*",
+      "styles/*"
+    ],
+    "matches": ["<all_urls>"],
+    "use_dynamic_url": true
+  }],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 }
