@@ -34,8 +34,10 @@ class YoutubeController {
     if (!playButton) return;
 
     const buttonStyle = `
-      width: 46px;
-      height: 46px;
+      width: 46px !important;
+      height: 46px !important;
+      min-width: 46px !important;
+      min-height: 46px !important;
       border: none;
       background: transparent;
       color: white;
@@ -43,7 +45,7 @@ class YoutubeController {
       padding: 0;
       margin: 0 2px;
       opacity: 0.9;
-      transition: all 0.2s;
+      transition: opacity 0.2s;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -51,8 +53,10 @@ class YoutubeController {
     `;
 
     const svgStyle = `
-      width: 32px;
-      height: 32px;
+      width: 32px !important;
+      height: 32px !important;
+      min-width: 32px !important;
+      min-height: 32px !important;
       fill: currentColor;
       filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
     `;
@@ -87,13 +91,9 @@ class YoutubeController {
     [backwardButton, forwardButton].forEach(button => {
       button.addEventListener('mouseover', () => {
         button.style.opacity = '1';
-        button.style.transform = 'translateY(2px) scale(1.1)';
-        button.querySelector('svg').style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.8))';
       });
       button.addEventListener('mouseout', () => {
         button.style.opacity = '0.9';
-        button.style.transform = 'translateY(2px)';
-        button.querySelector('svg').style.filter = 'drop-shadow(0 1px 1px rgba(0,0,0,0.5))';
       });
     });
   }
