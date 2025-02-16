@@ -1,47 +1,84 @@
-import { messages } from './i18n/messages.js';
+import { getMessage } from './i18n/messages.js';
 
 class PopupManager {
   constructor() {
-    this.toggleSwitch = document.getElementById('toggleSwitch');
-    this.searchPrefix = document.getElementById('searchPrefix');
-    this.saveButton = document.getElementById('saveButton');
+    this.toggleSwitch = null;
+    this.searchPrefix = null;
+    this.saveButton = null;
+    this.skipTimeInput = null;
+    this.skipTimeSaveButton = null;
+    this.lastSavedPrefix = '';
+    this.lastSavedSkipTime = 5;
     this.POPUP_CLOSE_DELAY = 500;
-    this.initialize();
+
+    // DOM이 로드된 후 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+      this.toggleSwitch = document.getElementById('toggleSwitch');
+      this.searchPrefix = document.getElementById('searchPrefix');
+      this.saveButton = document.getElementById('saveButton');
+      this.skipTimeInput = document.getElementById('skipTimeInput');
+      this.skipTimeSaveButton = document.getElementById('skipTimeSaveButton');
+      
+      if (!this.toggleSwitch || !this.searchPrefix || !this.saveButton || 
+          !this.skipTimeInput || !this.skipTimeSaveButton) {
+        console.error('필수 UI 요소를 찾을 수 없습니다.');
+        return;
+      }
+
+      this.initialize();
+    });
   }
 
   async initialize() {
     try {
-      if (!chrome.runtime?.id) {
-        console.error('확장프로그램 컨텍스트를 찾을 수 없습니다.');
-        return;
+      if (!chrome?.runtime?.id) {
+        throw new Error('Extension context not available');
       }
 
       const data = await chrome.storage.local.get(['isUnblocked', 'searchPrefix', 'youtubeSkipTime']);
-      this.toggleSwitch.checked = data.isUnblocked;
-      this.searchPrefix.value = data.searchPrefix || '';
-      this.lastSavedPrefix = data.searchPrefix || '';
-      
-      this.skipTimeInput = document.getElementById('skipTimeInput');
-      this.skipTimeSaveButton = document.getElementById('skipTimeSaveButton');
-      this.skipTimeInput.value = data.youtubeSkipTime || 5;
-      this.lastSavedSkipTime = data.youtubeSkipTime || 5;
-      
-      const lang = (navigator.language || navigator.userLanguage).split('-')[0];
-      const texts = messages[lang] || messages.en;
-      
-      document.getElementById('extensionTitle').textContent = texts.extensionName;
-      document.getElementById('copyProtectionText').textContent = texts.copyProtectionToggle;
-      document.getElementById('searchPrefixText').textContent = texts.searchPrefixPlaceholder;
-      this.searchPrefix.placeholder = texts.searchPrefixPlaceholder;
-      this.saveButton.textContent = texts.saveButton;
-      this.skipTimeSaveButton.textContent = texts.saveButton;
-      document.getElementById('youtubeControlText').textContent = texts.youtubeControlText;
-      
-      this.saveButton.disabled = true;
-      this.skipTimeSaveButton.disabled = true;
+      this.initializeUI(data);
       this.setupEventListeners();
     } catch (error) {
       console.error('초기화 오류:', error);
+    }
+  }
+
+  initializeUI(data) {
+    try {
+      // UI 요소들에 다국어 텍스트 적용
+      const elements = {
+        'extensionTitle': 'extensionName',
+        'copyProtectionText': 'copyProtectionToggle',
+        'searchPrefixText': 'searchPrefixPlaceholder',
+        'youtubeControlText': 'youtubeControlText'
+      };
+
+      Object.entries(elements).forEach(([id, key]) => {
+        const element = document.getElementById(id);
+        if (!element) {
+          console.warn(`Element not found: ${id}`);
+          return;
+        }
+        element.textContent = getMessage(key);
+      });
+
+      // 데이터 초기화
+      this.toggleSwitch.checked = data.isUnblocked;
+      this.searchPrefix.value = data.searchPrefix || '';
+      this.skipTimeInput.value = data.youtubeSkipTime || 5;
+      this.lastSavedPrefix = data.searchPrefix || '';
+      this.lastSavedSkipTime = data.youtubeSkipTime || 5;
+
+      // 버튼 텍스트 설정
+      this.searchPrefix.placeholder = getMessage('searchPrefixPlaceholder');
+      this.saveButton.textContent = getMessage('saveButton');
+      this.skipTimeSaveButton.textContent = getMessage('saveButton');
+
+      // 버튼 초기 상태
+      this.saveButton.disabled = true;
+      this.skipTimeSaveButton.disabled = true;
+    } catch (error) {
+      console.error('UI 초기화 오류:', error);
     }
   }
 
@@ -167,6 +204,5 @@ class PopupManager {
   
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  new PopupManager();
-});
+// 클래스 초기화
+new PopupManager();

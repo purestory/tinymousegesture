@@ -1,4 +1,5 @@
 import { messages } from './i18n/messages.js';
+import { getMessage } from './i18n/messages.js';
 
 class BackgroundManager {
   constructor() {
@@ -34,15 +35,10 @@ class BackgroundManager {
   }
 
   setupContextMenu() {
-    const lang = (navigator.language || 'en').split('-')[0];
-    const texts = messages[lang] || messages.en;
-    
     chrome.contextMenus.removeAll(() => {
       chrome.contextMenus.create({
         id: 'searchWithPrefix',
-        title: this.currentPrefix 
-          ? `${this.currentPrefix} "%s" 검색` 
-          : `"%s" 검색`,
+        title: getMessage('searchWithPrefix').replace('%s', this.currentPrefix ? `${this.currentPrefix} "%s"` : '"%s"'),
         contexts: ['selection']
       });
     });
@@ -67,9 +63,7 @@ class BackgroundManager {
 
   updateContextMenu() {
     chrome.contextMenus.update('searchWithPrefix', {
-      title: this.currentPrefix 
-        ? `${this.currentPrefix} "%s" 검색` 
-        : `"%s" 검색`
+      title: getMessage('searchWithPrefix').replace('%s', this.currentPrefix ? `${this.currentPrefix} "%s"` : '"%s"')
     }, () => {
       if (chrome.runtime.lastError) {
         this.setupContextMenu();

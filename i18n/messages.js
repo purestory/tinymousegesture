@@ -1,4 +1,4 @@
-export const messages = {
+const messages = {
   en: {
     extensionName: "Mouse Gesture & Copy Protection Bypass",
     extensionDescription: "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight extension.",
@@ -8,7 +8,10 @@ export const messages = {
     searchWithPrefix: "Search \"%s\"",
     youtubeControlText: "YouTube Skip Time (seconds)",
     gestureBack: "Back",
-    gestureForward: "Forward"
+    gestureForward: "Forward",
+    initializationError: "Initialization error",
+    saveError: "Save error",
+    extensionContextError: "Extension context not found"
   },
   ko: {
     extensionName: "마우스 제스처 & 복사방지 해제",
@@ -188,6 +191,29 @@ export const messages = {
     youtubeControlText: "YouTube Skip Time (seconds)"
   }
 };
+
+let currentLang = null;
+
+export function getCurrentLanguage() {
+  if (!currentLang) {
+    currentLang = (navigator.language || navigator.userLanguage).split('-')[0];
+    currentLang = messages[currentLang] ? currentLang : 'en';
+  }
+  return currentLang;
+}
+
+export function getMessage(key) {
+  const lang = getCurrentLanguage();
+  const texts = messages[lang] || messages.en;
+  return texts[key] || messages.en[key];
+}
+
+export function getAllMessages() {
+  const lang = getCurrentLanguage();
+  return messages[lang] || messages.en;
+}
+
+export { messages };
 
 // 브라우저 환경용
 if (typeof window !== 'undefined') {
