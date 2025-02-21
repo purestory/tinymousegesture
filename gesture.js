@@ -126,10 +126,10 @@ class GestureNavigator {
   }
 
   setupEventListeners() {
-    document.addEventListener('mousedown', this.handleMouseDown.bind(this), true);
-    document.addEventListener('mousemove', this.handleMouseMove.bind(this), true);
-    document.addEventListener('mouseup', this.handleMouseUp.bind(this), true);
-    document.addEventListener('contextmenu', this.handleContextMenu.bind(this), true);
+    document.addEventListener('mousedown', this.handleMouseDown.bind(this), { capture: true, passive: false });
+    document.addEventListener('mousemove', this.handleMouseMove.bind(this), { capture: true, passive: false });
+    document.addEventListener('mouseup', this.handleMouseUp.bind(this), { capture: true, passive: false });
+    document.addEventListener('contextmenu', this.handleContextMenu.bind(this), { capture: true, passive: false });
   }
 
   handleMouseDown(e) {

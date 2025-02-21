@@ -6,8 +6,7 @@
   "homepage_url": "https://github.com/purestory/tinymousegesture",
   "permissions": [
     "storage",
-    "contextMenus",
-    "tabs"
+    "contextMenus"
   ],
   "action": {
     "default_icon": {
@@ -51,15 +50,17 @@
       "all_frames": true
     }
   ],
-  "web_accessible_resources": [{
-    "resources": [
-      "i18n/messages.js",
-      "icons/*",
-      "styles/*"
-    ],
-    "matches": ["<all_urls>"],
-    "use_dynamic_url": true
-  }],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "i18n/messages.js",
+        "icons/*",
+        "styles/*"
+      ],
+      "matches": ["<all_urls>"],
+      "use_dynamic_url": true
+    }
+  ],
   "host_permissions": [
     "*://*/*"
   ],

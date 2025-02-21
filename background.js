@@ -36,15 +36,26 @@ class BackgroundManager {
   }
 
   setupContextMenus() {
-    chrome.contextMenus.create({
-      id: 'searchWithPrefix',
-      title: '"%s" 검색하기',
-      contexts: ['selection']
+    chrome.runtime.onInstalled.addListener(() => {
+      chrome.contextMenus.removeAll(() => {
+        chrome.contextMenus.create({
+          id: "searchWithPrefix",
+          title: chrome.i18n.getMessage("searchWithPrefixTitle") || "Search with prefix",
+          contexts: ["selection"]
+        }, () => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+          }
+        });
+      });
     });
 
     chrome.contextMenus.onClicked.addListener((info, tab) => {
-      if (info.menuItemId === 'searchWithPrefix') {
-        this.handlePrefixSearch(info.selectionText);
+      if (info.menuItemId === "searchWithPrefix") {
+        let selectedText = info.selectionText;
+        let prefix = this.currentPrefix || "";
+        let query = prefix ? `${prefix} ${selectedText}` : selectedText;
+        chrome.tabs.create({ url: "https://www.google.com/search?q=" + encodeURIComponent(query) });
       }
     });
   }
@@ -76,12 +87,21 @@ class BackgroundManager {
   }
 
   updateContextMenu() {
-    chrome.contextMenus.update('searchWithPrefix', {
-      title: getMessage('searchWithPrefix').replace('%s', this.currentPrefix ? `${this.currentPrefix} "%s"` : '"%s"')
-    }, () => {
-      if (chrome.runtime.lastError) {
-        this.setupContextMenus();
-      }
+    // 지정된 접두어와 "%s" 자리표시자를 포함하여 context 메뉴 제목을 구성한 후,
+    // 기존의 메뉴 항목을 제거하고 새로 생성하여 항상 최신 제목이 표시되도록 합니다.
+    const prefix = this.currentPrefix ? this.currentPrefix + " " : "";
+    const titleTemplate = chrome.i18n.getMessage("searchWithPrefixTitle") || "Search";
+    const finalTitle = `${titleTemplate}: ${prefix}%s`;
+    chrome.contextMenus.remove("searchWithPrefix", () => {
+      chrome.contextMenus.create({
+        id: "searchWithPrefix",
+        title: finalTitle,
+        contexts: ["selection"]
+      }, () => {
+        if (chrome.runtime.lastError) {
+          console.error("Creation error:", chrome.runtime.lastError.message);
+        }
+      });
     });
   }
 
