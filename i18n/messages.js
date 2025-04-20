@@ -11,7 +11,12 @@ const messages = {
     gestureForward: "Forward",
     initializationError: "Initialization error",
     saveError: "Save error",
-    extensionContextError: "Extension context not found"
+    extensionContextError: "Extension context not found",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   ko: {
     extensionName: "마우스 제스처 & 복사방지 해제",
@@ -22,7 +27,12 @@ const messages = {
     searchWithPrefix: "\"%s\" 검색하기",
     youtubeControlText: "유튜브 스킵 시간(초)",
     gestureBack: "뒤로",
-    gestureForward: "앞으로"
+    gestureForward: "앞으로",
+    searchContextMenuTitle: "검색하기",
+    searchWithPrefixLabel: "%1 \"%2\"(으)로 검색",
+    searchWithPrefixDefaultLabel: "\"%1\" 검색",
+    searchOnSubtitleCat: "Subtitlecat에서 \"%s\" 검색",
+    searchGoogleRemoveLabel: "\"uncensored %s\" 구글 검색"
   },
   ja: {
     extensionName: "マウスジェスチャー & コピー保護解除",
@@ -33,7 +43,12 @@ const messages = {
     searchWithPrefix: "\"%s\"を検索",
     youtubeControlText: "YouTubeスキップ時間(秒)",
     gestureBack: "戻る",
-    gestureForward: "進む"
+    gestureForward: "進む",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   zh: {
     extensionName: "鼠标手势 & 复制保护解除",
@@ -44,7 +59,12 @@ const messages = {
     searchWithPrefix: "搜索\"%s\"",
     youtubeControlText: "YouTube跳转时间(秒)",
     gestureBack: "后退",
-    gestureForward: "前进"
+    gestureForward: "前进",
+    searchContextMenuTitle: "搜索",
+    searchWithPrefixLabel: "使用 %1 搜索 \"%2\"",
+    searchWithPrefixDefaultLabel: "搜索 \"%1\"",
+    searchOnSubtitleCat: "在 Subtitlecat 上搜索 \"%s\"",
+    searchGoogleRemoveLabel: "在谷歌上搜索 \"uncensored %s\""
   },
   zh_TW: {
     extensionName: "滑鼠手勢 & 複製保護解除",
@@ -53,7 +73,12 @@ const messages = {
     searchPrefixPlaceholder: "搜尋前綴",
     saveButton: "儲存",
     searchWithPrefix: "搜尋\"%s\"",
-    youtubeControlText: "YouTube跳轉時間(秒)"
+    youtubeControlText: "YouTube跳轉時間(秒)",
+    searchContextMenuTitle: "搜尋",
+    searchWithPrefixLabel: "使用 %1 搜尋 \"%2\"",
+    searchWithPrefixDefaultLabel: "搜尋 \"%1\"",
+    searchOnSubtitleCat: "在 Subtitlecat 上搜尋 \"%s\"",
+    searchGoogleRemoveLabel: "在 Google 上搜尋 \"uncensored %s\""
   },
   es: {
     extensionName: "Gestos del Ratón & Bypass de Protección de Copia",
@@ -62,7 +87,12 @@ const messages = {
     searchPrefixPlaceholder: "Prefijo de Búsqueda",
     saveButton: "Guardar",
     searchWithPrefix: "Buscar \"%s\"",
-    youtubeControlText: "Tiempo de salto de YouTube (segundos)"
+    youtubeControlText: "Tiempo de salto de YouTube (segundos)",
+    searchContextMenuTitle: "Buscar",
+    searchWithPrefixLabel: "Buscar con %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Buscar \"%1\"",
+    searchOnSubtitleCat: "Buscar \"%s\" en Subtitlecat",
+    searchGoogleRemoveLabel: "Buscar en Google \"uncensored %s\""
   },
   fr: {
     extensionName: "Gestes de Souris & Contournement de Protection de Copie",
@@ -71,7 +101,12 @@ const messages = {
     searchPrefixPlaceholder: "Préfixe de Recherche",
     saveButton: "Enregistrer",
     searchWithPrefix: "Rechercher \"%s\"",
-    youtubeControlText: "Temps de saut YouTube (secondes)"
+    youtubeControlText: "Temps de saut YouTube (secondes)",
+    searchContextMenuTitle: "Rechercher",
+    searchWithPrefixLabel: "Rechercher avec %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Rechercher \"%1\"",
+    searchOnSubtitleCat: "Rechercher \"%s\" sur Subtitlecat",
+    searchGoogleRemoveLabel: "Rechercher sur Google \"uncensored %s\""
   },
   de: {
     extensionName: "Mausgesten & Kopierschutz-Bypass",
@@ -80,7 +115,12 @@ const messages = {
     searchPrefixPlaceholder: "Suchpräfix",
     saveButton: "Speichern",
     searchWithPrefix: "\"%s\" suchen",
-    youtubeControlText: "YouTube Sprungzeit (Sekunden)"
+    youtubeControlText: "YouTube Sprungzeit (Sekunden)",
+    searchContextMenuTitle: "Suchen",
+    searchWithPrefixLabel: "Mit %1 \"%2\" suchen",
+    searchWithPrefixDefaultLabel: "\"%1\" suchen",
+    searchOnSubtitleCat: "\"%s\" auf Subtitlecat suchen",
+    searchGoogleRemoveLabel: "Auf Google nach \"uncensored %s\" suchen"
   },
   it: {
     extensionName: "Gesti del Mouse & Bypass Protezione Copia",
@@ -89,7 +129,12 @@ const messages = {
     searchPrefixPlaceholder: "Prefisso di Ricerca",
     saveButton: "Salva",
     searchWithPrefix: "Cerca \"%s\"",
-    youtubeControlText: "Tempo di salto YouTube (secondi)"
+    youtubeControlText: "Tempo di salto YouTube (secondi)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   pt: {
     extensionName: "Gestos do Mouse & Bypass de Proteção de Cópia",
@@ -98,7 +143,12 @@ const messages = {
     searchPrefixPlaceholder: "Prefixo de Pesquisa",
     saveButton: "Salvar",
     searchWithPrefix: "Pesquisar \"%s\"",
-    youtubeControlText: "Tempo de pulo do YouTube (segundos)"
+    youtubeControlText: "Tempo de pulo do YouTube (segundos)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   ru: {
     extensionName: "Жесты Мыши & Обход Защиты от Копирования",
@@ -107,7 +157,12 @@ const messages = {
     searchPrefixPlaceholder: "Префикс Поиска",
     saveButton: "Сохранить",
     searchWithPrefix: "Искать \"%s\"",
-    youtubeControlText: "Время пропуска YouTube (секунды)"
+    youtubeControlText: "Время пропуска YouTube (секунды)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   ar: {
     extensionName: "إيماءات الماوس وتجاوز حماية النسخ",
@@ -116,7 +171,12 @@ const messages = {
     searchPrefixPlaceholder: "بادئة البحث",
     saveButton: "حفظ",
     searchWithPrefix: "بحث عن \"%s\"",
-    youtubeControlText: "وقت التخطي في يوتيوب (ثواني)"
+    youtubeControlText: "وقت التخطي في يوتيوب (ثواني)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   hi: {
     extensionName: "माउस जेस्चर और कॉपी प्रोटेक्शन बायपास",
@@ -125,7 +185,12 @@ const messages = {
     searchPrefixPlaceholder: "खोज उपसर्ग",
     saveButton: "सहेजें",
     searchWithPrefix: "\"%s\" खोजें",
-    youtubeControlText: "यूट्यूब स्किप टाइम (सेकंड)"
+    youtubeControlText: "यूट्यूब स्किप टाइम (सेकंड)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   vi: {
     extensionName: "Cử Chỉ Chuột & Bỏ Qua Bảo Vệ Sao Chép",
@@ -134,7 +199,12 @@ const messages = {
     searchPrefixPlaceholder: "Tiền Tố Tìm Kiếm",
     saveButton: "Lưu",
     searchWithPrefix: "Tìm kiếm \"%s\"",
-    youtubeControlText: "Thời gian nhảy YouTube (giây)"
+    youtubeControlText: "Thời gian nhảy YouTube (giây)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   th: {
     extensionName: "ท่าทางเมาส์ & บายพาสการป้องกันการคัดลอก",
@@ -143,7 +213,12 @@ const messages = {
     searchPrefixPlaceholder: "คำนำหน้าการค้นหา",
     saveButton: "บันทึก",
     searchWithPrefix: "ค้นหา \"%s\"",
-    youtubeControlText: "เวลาข้าม YouTube (วินาที)"
+    youtubeControlText: "เวลาข้าม YouTube (วินาที)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   id: {
     extensionName: "Gestur Mouse & Bypass Proteksi Salin",
@@ -152,7 +227,12 @@ const messages = {
     searchPrefixPlaceholder: "Awalan Pencarian",
     saveButton: "Simpan",
     searchWithPrefix: "Cari \"%s\"",
-    youtubeControlText: "YouTube Skip Time (seconds)"
+    youtubeControlText: "YouTube Skip Time (seconds)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   tr: {
     extensionName: "Fare Hareketleri & Kopya Koruması Bypass",
@@ -161,7 +241,12 @@ const messages = {
     searchPrefixPlaceholder: "Arama Öneki",
     saveButton: "Kaydet",
     searchWithPrefix: "\"%s\" ara",
-    youtubeControlText: "YouTube Skip Time (seconds)"
+    youtubeControlText: "YouTube Skip Time (seconds)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   pl: {
     extensionName: "Gesty Myszy & Obejście Ochrony Kopiowania",
@@ -170,7 +255,12 @@ const messages = {
     searchPrefixPlaceholder: "Prefiks Wyszukiwania",
     saveButton: "Zapisz",
     searchWithPrefix: "Szukaj \"%s\"",
-    youtubeControlText: "YouTube Skip Time (seconds)"
+    youtubeControlText: "YouTube Skip Time (seconds)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   nl: {
     extensionName: "Muisgebaren & Kopieerbeveiliging Bypass",
@@ -179,7 +269,12 @@ const messages = {
     searchPrefixPlaceholder: "Zoekvoorvoegsel",
     saveButton: "Opslaan",
     searchWithPrefix: "Zoek \"%s\"",
-    youtubeControlText: "YouTube Skip Time (seconds)"
+    youtubeControlText: "YouTube Skip Time (seconds)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   },
   cs: {
     extensionName: "Gesta Myši & Obejití Ochrany Kopírování",
@@ -188,7 +283,12 @@ const messages = {
     searchPrefixPlaceholder: "Prefix Vyhledávání",
     saveButton: "Uložit",
     searchWithPrefix: "Hledat \"%s\"",
-    youtubeControlText: "YouTube Skip Time (seconds)"
+    youtubeControlText: "YouTube Skip Time (seconds)",
+    searchContextMenuTitle: "Search",
+    searchWithPrefixLabel: "Search with %1 \"%2\"",
+    searchWithPrefixDefaultLabel: "Search \"%1\"",
+    searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
   }
 };
 
@@ -196,16 +296,38 @@ let currentLang = null;
 
 export function getCurrentLanguage() {
   if (!currentLang) {
-    currentLang = (navigator.language || navigator.userLanguage).split('-')[0];
+    if (typeof chrome !== 'undefined' && chrome.i18n && chrome.i18n.getUILanguage) {
+      currentLang = chrome.i18n.getUILanguage().split('-')[0];
+    } else {
+      currentLang = (navigator.language || navigator.userLanguage || 'en').split('-')[0];
+    }
     currentLang = messages[currentLang] ? currentLang : 'en';
   }
   return currentLang;
 }
 
-export function getMessage(key) {
+export function getMessage(messageName, substitutions) {
   const lang = getCurrentLanguage();
-  const texts = messages[lang] || messages.en;
-  return texts[key] || messages.en[key];
+  let message = messages[lang]?.[messageName] || messages['en']?.[messageName];
+
+  if (!message) {
+      console.warn(`메시지 키 '${messageName}'에 대한 번역을 찾을 수 없습니다.`);
+      return messageName;
+  }
+
+  if (substitutions) {
+    if (typeof substitutions === 'string') {
+      message = message.replace('%s', substitutions);
+    } else if (Array.isArray(substitutions)) {
+      for (let i = 0; i < substitutions.length; i++) {
+        message = message.replace(`%${i + 1}`, substitutions[i]);
+      }
+      if (message.includes('%s')) {
+         message = message.replace('%s', substitutions[substitutions.length -1]);
+      }
+    }
+  }
+  return message;
 }
 
 export function getAllMessages() {
@@ -215,7 +337,6 @@ export function getAllMessages() {
 
 export { messages };
 
-// 브라우저 환경용
 if (typeof window !== 'undefined') {
   window.messages = messages;
 } 
