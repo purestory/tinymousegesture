@@ -112,13 +112,15 @@
     
     // inline 스크립트 대신 외부 파일(override.js)을 불러옵니다.
     injectOverrideScript() {
-      const script = document.createElement('script');
-      script.id = 'override-events';
-      script.src = chrome.runtime.getURL('override.js');
-      document.documentElement.appendChild(script);
-      script.onload = function() {
-        script.remove();
-      };
+      if (chrome.runtime && chrome.runtime.getURL) {
+        const script = document.createElement('script');
+        script.id = 'override-events';
+        script.src = chrome.runtime.getURL('override.js');
+        document.documentElement.appendChild(script);
+        script.onload = function() {
+          script.remove();
+        };
+      }
     }
     
     addGlobalCaptureListeners() {
