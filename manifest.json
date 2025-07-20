@@ -33,6 +33,7 @@
       "matches": ["<all_urls>"],
       "js": ["unblock.js"],
       "run_at": "document_start",
+      "all_frames": true,
       "type": "module"
     },
     {
@@ -44,18 +45,14 @@
       "matches": ["*://*.youtube.com/*"],
       "js": ["youtubeControl.js"],
       "type": "module"
-    },
-    {
-      "matches": ["https://blog.naver.com/*"],
-      "js": ["unblock.js"],
-      "all_frames": true
     }
   ],
   "web_accessible_resources": [{
     "resources": [
       "i18n/messages.js",
       "icons/*",
-      "styles/*"
+      "styles/*",
+      "override.js"
     ],
     "matches": ["<all_urls>"],
     "use_dynamic_url": true

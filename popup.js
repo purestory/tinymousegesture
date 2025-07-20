@@ -185,7 +185,8 @@ class PopupManager {
 
   async handleToggleChange(e) {
     try {
-      await chrome.runtime.sendMessage({ action: 'toggleUnblock' });
+      const newState = e.target.checked;
+      await chrome.runtime.sendMessage({ action: 'toggleUnblock', state: newState });
       setTimeout(() => window.close(), 300);
     } catch (error) {
       console.error('상태 변경 요청 오류:', error);

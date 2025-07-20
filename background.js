@@ -182,31 +182,29 @@ class BackgroundManager {
       this.currentState.isUnblocked = !this.currentState.isUnblocked;
       this.updateIcon(this.currentState.isUnblocked);
 
-      let targetTabId = tab?.id;
-      if (!targetTabId) {
-          const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-          targetTabId = activeTab?.id;
-      }
+      // 상태를 스토리지에 저장합니다.
+      await chrome.storage.local.set({ isUnblocked: this.currentState.isUnblocked });
 
-      if (targetTabId) {
-         console.log(`Sending toggleUnblock to tab ${targetTabId}, state: ${this.currentState.isUnblocked}`);
-        await chrome.tabs.sendMessage(targetTabId, {
-          action: "updateUnblockState",
+      // 모든 탭에 상태 변경을 알립니다.
+      const tabs = await chrome.tabs.query({});
+      for (const t of tabs) {
+        chrome.tabs.sendMessage(t.id, {
+          action: 'toggleUnblock',
           state: this.currentState.isUnblocked
         }).catch(error => {
-          console.warn(`Failed to send updateUnblockState message to tab ${targetTabId}: ${error.message}`);
+          // console.warn(`Tab ${t.id}에 메시지 전송 실패: ${error.message}`);
         });
-      } else {
-           console.log("No active tab found to send toggleUnblock message.");
       }
 
+      // 팝업 UI를 업데이트합니다.
       chrome.runtime.sendMessage({
-          action: "updatePopupState",
-          isUnblocked: this.currentState.isUnblocked
-      }).catch(err => { /* 팝업 닫힘 */ });
+        action: 'updatePopupState',
+        isUnblocked: this.currentState.isUnblocked
+      }).catch(err => { /* 팝업이 닫혀있을 수 있습니다. */ });
 
     } catch (error) {
       console.error('토글 상태 변경 오류:', error);
+      // 오류 발생 시 상태를 원복합니다.
       this.currentState.isUnblocked = !this.currentState.isUnblocked;
       this.updateIcon(this.currentState.isUnblocked);
     }
