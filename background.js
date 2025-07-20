@@ -41,7 +41,7 @@ class BackgroundManager {
         this.currentPrefix = request.prefix;
         this.updateContextMenu();
       } else if (request.action === 'toggleUnblock') {
-        this.toggleUnblockState(sender.tab);
+        this.toggleUnblockState(request.tabId);
         sendResponse({newState: this.currentState.isUnblocked});
       } else if (request.action === 'getUnblockState') {
         sendResponse({ isUnblocked: this.currentState.isUnblocked });
@@ -177,7 +177,7 @@ class BackgroundManager {
     });
   }
 
-  async toggleUnblockState(tab) {
+  async toggleUnblockState(tabId) {
     try {
       this.currentState.isUnblocked = !this.currentState.isUnblocked;
       this.updateIcon(this.currentState.isUnblocked);
@@ -185,16 +185,13 @@ class BackgroundManager {
       // 상태를 스토리지에 저장합니다.
       await chrome.storage.local.set({ isUnblocked: this.currentState.isUnblocked });
 
-      // 모든 탭에 상태 변경을 알립니다.
-      const tabs = await chrome.tabs.query({});
-      for (const t of tabs) {
-        chrome.tabs.sendMessage(t.id, {
-          action: 'toggleUnblock',
-          state: this.currentState.isUnblocked
-        }).catch(error => {
-          // console.warn(`Tab ${t.id}에 메시지 전송 실패: ${error.message}`);
-        });
-      }
+      // 현재 탭에만 상태 변경을 알립니다.
+      chrome.tabs.sendMessage(tabId, {
+        action: 'toggleUnblock',
+        state: this.currentState.isUnblocked
+      }).catch(error => {
+        // console.warn(`Tab ${tabId}에 메시지 전송 실패: ${error.message}`);
+      });
 
       // 팝업 UI를 업데이트합니다.
       chrome.runtime.sendMessage({

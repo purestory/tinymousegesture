@@ -20,9 +20,6 @@
       try {
         const data = await chrome.storage.local.get('isUnblocked');
         this.isUnblocked = data.isUnblocked || false;
-        if (this.isUnblocked) {
-          this.unblockAll();
-        }
       } catch (error) {
         console.error('initializeState error:', error);
       }
