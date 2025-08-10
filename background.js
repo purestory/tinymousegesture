@@ -109,6 +109,18 @@ class BackgroundManager {
               console.error("searchGoogleRemove context menu creation failed: ", chrome.runtime.lastError.message);
           }
       });
+
+      // Supjav 검색 메뉴 추가
+      chrome.contextMenus.create({
+        id: 'searchSupjav',
+        title: getMessage('searchOnSupjav', '%s'),
+        contexts: ['selection'],
+        parentId: 'searchParent'
+      }, () => {
+          if (chrome.runtime.lastError) {
+              console.error("searchSupjav context menu creation failed: ", chrome.runtime.lastError.message);
+          }
+      });
     });
 
     if (!chrome.contextMenus.onClicked.hasListener(this.handleContextMenuClick)) {
@@ -127,6 +139,9 @@ class BackgroundManager {
     } else if (info.menuItemId === 'searchGoogleRemove') {
       const searchQuery = `uncensored ${info.selectionText}`;
       const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+      chrome.tabs.create({ url: searchUrl });
+    } else if (info.menuItemId === 'searchSupjav') {
+      const searchUrl = `https://supjav.com/?s=${encodeURIComponent(info.selectionText)}`;
       chrome.tabs.create({ url: searchUrl });
     }
   }
@@ -184,6 +199,15 @@ class BackgroundManager {
         }, () => {
            if (chrome.runtime.lastError) {
                 console.warn("컨텍스트 메뉴 업데이트 실패(searchGoogleRemove):", chrome.runtime.lastError.message);
+           }
+        });
+
+        // Supjav 메뉴 업데이트
+        chrome.contextMenus.update('searchSupjav', {
+           title: getMessage('searchOnSupjav', '"%s"')
+        }, () => {
+           if (chrome.runtime.lastError) {
+                console.warn("컨텍스트 메뉴 업데이트 실패(searchSupjav):", chrome.runtime.lastError.message);
            }
         });
     });

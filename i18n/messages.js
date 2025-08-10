@@ -16,7 +16,9 @@ const messages = {
     searchWithPrefixLabel: "Search with %1 \"%2\"",
     searchWithPrefixDefaultLabel: "Search \"%1\"",
     searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
-    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\""
+    searchGoogleRemoveLabel: "Search Google for \"uncensored %s\"",
+    // Supjav
+    searchOnSupjav: "Search \"%s\" on Supjav"
   },
   ko: {
     extensionName: "마우스 제스처 & 복사방지 해제",
@@ -32,7 +34,9 @@ const messages = {
     searchWithPrefixLabel: "%1 \"%2\"(으)로 검색",
     searchWithPrefixDefaultLabel: "\"%1\" 검색",
     searchOnSubtitleCat: "Subtitlecat에서 \"%s\" 검색",
-    searchGoogleRemoveLabel: "\"uncensored %s\" 구글 검색"
+    searchGoogleRemoveLabel: "\"uncensored %s\" 구글 검색",
+    // Supjav
+    searchOnSupjav: "Supjav에서 \"%s\" 검색"
   },
   ja: {
     extensionName: "マウスジェスチャー & コピー保護解除",
