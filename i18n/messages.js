@@ -18,7 +18,9 @@ const messages = {
     searchOnSubtitleCat: "Search \"%s\" on Subtitlecat",
     searchGoogleRemoveLabel: "Search Google for \"uncensored %s\"",
     // Supjav
-    searchOnSupjav: "Search \"%s\" on Supjav"
+    searchOnSupjav: "Search \"%s\" on Supjav",
+    // MissAV123
+    searchOnMissAV: "Search \"%s\" on MissAV123"
   },
   ko: {
     extensionName: "마우스 제스처 & 복사방지 해제",
@@ -36,7 +38,9 @@ const messages = {
     searchOnSubtitleCat: "Subtitlecat에서 \"%s\" 검색",
     searchGoogleRemoveLabel: "\"uncensored %s\" 구글 검색",
     // Supjav
-    searchOnSupjav: "Supjav에서 \"%s\" 검색"
+    searchOnSupjav: "Supjav에서 \"%s\" 검색",
+    // MissAV123
+    searchOnMissAV: "MissAV123에서 \"%s\" 검색"
   },
   ja: {
     extensionName: "マウスジェスチャー & コピー保護解除",

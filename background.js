@@ -121,6 +121,18 @@ class BackgroundManager {
               console.error("searchSupjav context menu creation failed: ", chrome.runtime.lastError.message);
           }
       });
+
+      // MissAV123 검색 메뉴 추가
+      chrome.contextMenus.create({
+        id: 'searchMissAV',
+        title: getMessage('searchOnMissAV', '%s'),
+        contexts: ['selection'],
+        parentId: 'searchParent'
+      }, () => {
+          if (chrome.runtime.lastError) {
+              console.error("searchMissAV context menu creation failed: ", chrome.runtime.lastError.message);
+          }
+      });
     });
 
     if (!chrome.contextMenus.onClicked.hasListener(this.handleContextMenuClick)) {
@@ -142,6 +154,9 @@ class BackgroundManager {
       chrome.tabs.create({ url: searchUrl });
     } else if (info.menuItemId === 'searchSupjav') {
       const searchUrl = `https://supjav.com/?s=${encodeURIComponent(info.selectionText)}`;
+      chrome.tabs.create({ url: searchUrl });
+    } else if (info.menuItemId === 'searchMissAV') {
+      const searchUrl = `https://missav123.com/ko/search/${encodeURIComponent(info.selectionText)}`;
       chrome.tabs.create({ url: searchUrl });
     }
   }
@@ -208,6 +223,15 @@ class BackgroundManager {
         }, () => {
            if (chrome.runtime.lastError) {
                 console.warn("컨텍스트 메뉴 업데이트 실패(searchSupjav):", chrome.runtime.lastError.message);
+           }
+        });
+
+        // MissAV123 메뉴 업데이트
+        chrome.contextMenus.update('searchMissAV', {
+           title: getMessage('searchOnMissAV', '"%s"')
+        }, () => {
+           if (chrome.runtime.lastError) {
+                console.warn("컨텍스트 메뉴 업데이트 실패(searchMissAV):", chrome.runtime.lastError.message);
            }
         });
     });
