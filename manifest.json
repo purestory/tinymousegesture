@@ -1,0 +1,87 @@
+{
+  "manifest_version": 3,
+  "name": "tiny mouse gesture & etc.",
+  "version": "1.6",
+  "description": "Navigate web pages with mouse gestures and bypass copy protection. Fast and lightweight extension.",
+  "homepage_url": "https://github.com/purestory/tinymousegesture",
+  "permissions": [
+    "storage",
+    "contextMenus",
+    "tabs"
+  ],
+  "action": {
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "tiny mouse gesture & etc.",
+    "default_description": "Lightweight mouse gestures, copy protection bypass, and quick search."
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["unblock.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "type": "module"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["gesture.js"],
+      "type": "module"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["searchModifier.js"],
+      "type": "module"
+    },
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["youtubeControl.js"],
+      "type": "module"
+    },
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["youtubeAdSkipper.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*"],
+      "js": ["adBlocker.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    },
+    {
+      "matches": ["*://*.hitomi.la/*"],
+      "js": ["hitomiRedirect.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [{
+    "resources": [
+      "i18n/messages.js",
+      "icons/*",
+      "styles/*",
+      "override.js"
+    ],
+    "matches": ["<all_urls>"],
+    "use_dynamic_url": true
+  }],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
