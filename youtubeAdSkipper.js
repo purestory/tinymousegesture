@@ -43,23 +43,45 @@
     const button = document.createElement('button');
     button.className = `ytp-button ${SKIP_BUTTON_CLASS}`;
     button.title = '영상 끝으로 이동';
-    button.style.display = 'flex';
-    button.style.alignItems = 'center';
-    button.style.padding = '0';
-    button.style.margin = '0 4px';
-    button.style.fontSize = '13px';
-    button.style.color = '#fff';
-    button.style.backgroundColor = 'transparent';
-    button.style.border = 'none';
-    button.style.borderRadius = '2px';
-    button.style.cursor = 'pointer';
-    button.style.whiteSpace = 'nowrap';
+    
+    // 강제적으로 보이도록 CSS 설정
+    button.style.cssText = `
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 8px !important;
+      margin: 0 4px !important;
+      font-size: 13px !important;
+      color: #fff !important;
+      background-color: transparent !important;
+      border: none !important;
+      border-radius: 2px !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      height: 46px !important;
+      min-width: auto !important;
+      font-weight: 500 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      position: relative !important;
+      z-index: 10 !important;
+      flex-shrink: 0 !important;
+    `;
     
     // 한글 텍스트만 추가
-    button.textContent = '건너띄기';
+    button.textContent = '건너뛰기';
     
     button.addEventListener('click', skipToEnd);
-    button.style.opacity = '1';
+    
+    // 호버 효과 추가
+    button.addEventListener('mouseenter', () => {
+      button.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+    });
+    button.addEventListener('mouseleave', () => {
+      button.style.backgroundColor = 'transparent';
+    });
+    
+    console.log('건너뛰기 버튼 생성됨:', button);
     return button;
   }
 
@@ -67,27 +89,49 @@
     const button = document.createElement('button');
     button.className = `ytp-button ${REFRESH_BUTTON_CLASS}`;
     button.title = '페이지 새로고침';
-    button.style.display = 'flex';
-    button.style.alignItems = 'center';
-    button.style.padding = '0';
-    button.style.margin = '0 4px';
-    button.style.fontSize = '13px';
-    button.style.color = '#fff';
-    button.style.backgroundColor = 'transparent';
-    button.style.border = 'none';
-    button.style.borderRadius = '2px';
-    button.style.cursor = 'pointer';
-    button.style.whiteSpace = 'nowrap';
+    
+    // 강제적으로 보이도록 CSS 설정
+    button.style.cssText = `
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 8px !important;
+      margin: 0 4px !important;
+      font-size: 13px !important;
+      color: #fff !important;
+      background-color: transparent !important;
+      border: none !important;
+      border-radius: 2px !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      height: 46px !important;
+      min-width: auto !important;
+      font-weight: 500 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      position: relative !important;
+      z-index: 10 !important;
+      flex-shrink: 0 !important;
+    `;
     
     // 한글 텍스트만 추가
     button.textContent = '새로고침';
     
     button.addEventListener('click', refreshPage);
-    button.style.opacity = '1';
+    
+    // 호버 효과 추가
+    button.addEventListener('mouseenter', () => {
+      button.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+    });
+    button.addEventListener('mouseleave', () => {
+      button.style.backgroundColor = 'transparent';
+    });
+    
+    console.log('새로고침 버튼 생성됨:', button);
     return button;
   }
 
-  // 유튜브 컨트롤러에 버튼 추가 (왼쪽 컨트롤 오른쪽에)
+  // 유튜브 컨트롤러에 버튼 추가 (볼륨과 시간 사이)
   function addButtonsToYouTubeControls() {
     // 이미 추가된 버튼 제거
     removeExistingButtons();
@@ -99,15 +143,53 @@
       return false;
     }
     
-    // 버튼 생성 및 추가
+    console.log('leftControls 찾음:', leftControls);
+    console.log('leftControls 자식들:', Array.from(leftControls.children).map(child => child.className));
+    
+    // 버튼 생성
     const skipButton = createSkipButton();
     const refreshButton = createRefreshButton();
     
-    // 왼쪽 컨트롤의 맨 뒤에 추가 (오른쪽 빈 공간에)
+    console.log('버튼 생성 완료');
+    
+    // 음소거 버튼 앞에 배치
+    // 1순위: 뮤트 버튼 앞에 배치
+    const muteButton = leftControls.querySelector('.ytp-mute-button');
+    console.log('muteButton 찾기 결과:', !!muteButton);
+    
+    if (muteButton) {
+      muteButton.insertAdjacentElement('beforebegin', skipButton);
+      skipButton.insertAdjacentElement('afterend', refreshButton);
+      console.log('뮤트 버튼 앞에 버튼 추가 완료');
+      return true;
+    }
+    
+    // 2순위: 볼륨 패널 앞에 배치
+    const volumePanel = leftControls.querySelector('.ytp-volume-panel');
+    console.log('volumePanel 찾기 결과:', !!volumePanel);
+    
+    if (volumePanel) {
+      volumePanel.insertAdjacentElement('beforebegin', skipButton);
+      skipButton.insertAdjacentElement('afterend', refreshButton);
+      console.log('볼륨 패널 앞에 버튼 추가 완료');
+      return true;
+    }
+    
+    // 3순위: 시간 표시 앞에 배치
+    const timeDisplay = leftControls.querySelector('.ytp-time-display');
+    console.log('timeDisplay 찾기 결과:', !!timeDisplay);
+    
+    if (timeDisplay) {
+      timeDisplay.insertAdjacentElement('beforebegin', skipButton);
+      skipButton.insertAdjacentElement('afterend', refreshButton);
+      console.log('시간 표시 앞에 버튼 추가 완료');
+      return true;
+    }
+    
+    // 마지막: 왼쪽 컨트롤 맨 뒤에 추가
     leftControls.appendChild(skipButton);
     leftControls.appendChild(refreshButton);
-    
-    console.log('유튜브 왼쪽 컨트롤러에 버튼 추가 완료');
+    console.log('왼쪽 컨트롤 맨 뒤에 버튼 추가 완료');
     return true;
   }
   
@@ -232,10 +314,22 @@
   function tryAddButtons() {
     // 유튜브 컨트롤이 완전히 로드되었는지 확인
     const leftControls = document.querySelector('.ytp-left-controls');
+    const rightControls = document.querySelector('.ytp-right-controls');
+    
+    console.log('tryAddButtons 호출됨');
+    console.log('leftControls 존재:', !!leftControls);
+    console.log('rightControls 존재:', !!rightControls);
+    
     if (leftControls && leftControls.children.length > 0) {
+      console.log('leftControls 자식 수:', leftControls.children.length);
       if (addButtonsToYouTubeControls()) {
+        console.log('버튼 추가 성공, 인터벌 중지');
         clearInterval(addButtonsInterval);
+      } else {
+        console.log('버튼 추가 실패, 다시 시도');
       }
+    } else {
+      console.log('컨트롤이 아직 로드되지 않음');
     }
   }
 
