@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "https://gall.dcinside.com/mgallery/board/view/?id=\\1&no=\\2"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://m\\.dcinside\\.com/board/([^/]+)/(\\d+)(?:\\?.*)?$",
+      "resourceTypes": ["main_frame"]
+    }
+  }
+]
