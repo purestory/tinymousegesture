@@ -6,6 +6,68 @@
 
   // 유튜브 사이트인지 확인
   if (!window.location.hostname.includes('youtube.com')) return;
+
+  // 광고 차단 감지 창 자동 닫기 함수
+  function closeAdBlockerDialog() {
+    // 광고 차단 감지 다이얼로그 선택자들
+    const dialogSelectors = [
+      'ytd-enforcement-message-view-model',
+      'tp-yt-paper-dialog[aria-modal="true"]',
+      '.ytd-popup-container ytd-enforcement-message-view-model',
+      '[role="dialog"] ytd-enforcement-message-view-model'
+    ];
+    
+    for (const selector of dialogSelectors) {
+      const dialog = document.querySelector(selector);
+      if (dialog && dialog.offsetParent !== null) {
+        console.log('광고 차단 감지 창 발견:', selector);
+        
+        // 닫기 버튼 찾기
+        const closeButton = dialog.querySelector('#dismiss-button button, .yt-spec-button-shape-next[aria-label*="닫기"], .yt-spec-button-shape-next[title*="닫기"]');
+        if (closeButton) {
+          console.log('닫기 버튼 클릭으로 창 닫기');
+          closeButton.click();
+          return true;
+        }
+        
+        // ESC 키 이벤트로 닫기 시도
+        const escEvent = new KeyboardEvent('keydown', {
+          key: 'Escape',
+          code: 'Escape',
+          keyCode: 27,
+          which: 27,
+          bubbles: true,
+          cancelable: true
+        });
+        document.dispatchEvent(escEvent);
+        console.log('ESC 키 이벤트로 창 닫기 시도');
+        
+        // 다이얼로그 직접 제거
+        setTimeout(() => {
+          if (dialog && dialog.offsetParent !== null) {
+            console.log('다이얼로그 직접 제거');
+            dialog.style.display = 'none';
+            dialog.remove();
+          }
+        }, 100);
+        
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // 광고 차단 감지 창 감시 및 자동 닫기
+  function startAdBlockerDialogWatcher() {
+    const dialogWatcherInterval = setInterval(() => {
+      if (closeAdBlockerDialog()) {
+        console.log('🚫 광고 차단 감지 창 자동으로 닫음');
+      }
+    }, 500); // 0.5초마다 확인
+    
+    console.log('🚫 광고 차단 감지 창 감시기 시작 (0.5초 간격)');
+    return dialogWatcherInterval;
+  }
   
   // 유튜브 플레이어 컨트롤 스타일과 유사하게 설정
   const SKIP_BUTTON_CLASS = 'ytp-custom-skip-button';
@@ -402,6 +464,26 @@
         // 스킵 버튼이 추가되었는지 확인
         for (const node of mutation.addedNodes) {
           if (node.nodeType === Node.ELEMENT_NODE) {
+            // 광고 차단 감지 창 확인
+            const adBlockerDialogSelectors = [
+              'ytd-enforcement-message-view-model',
+              'tp-yt-paper-dialog[aria-modal="true"]'
+            ];
+            
+            let foundAdBlockerDialog = false;
+            for (const selector of adBlockerDialogSelectors) {
+              const dialog = node.querySelector ? node.querySelector(selector) : null;
+              if (dialog || (node.classList && node.classList.contains(selector.split('[')[0].substring(1)))) {
+                foundAdBlockerDialog = true;
+                break;
+              }
+            }
+            
+            if (foundAdBlockerDialog) {
+              console.log('광고 차단 감지 창 DOM 추가 감지됨, 즉시 닫기 실행');
+              setTimeout(() => closeAdBlockerDialog(), 100); // 약간의 지연 후 닫기
+            }
+            
             // 스킵 버튼 확인 (더 많은 선택자 포함)
             const skipSelectors = [
               '.ytp-ad-skip-button',
@@ -444,7 +526,7 @@
     }
   });
   
-  // 비디오 플레이어 영역 관찰
+  // 비디오 플레이어 영역 및 전체 페이지 관찰
   function startObserving() {
     const playerContainer = document.querySelector('#movie_player');
     if (playerContainer) {
@@ -453,6 +535,15 @@
         subtree: true,
         attributes: true,
         attributeFilter: ['class', 'style']
+      });
+    }
+    
+    // 광고 차단 감지 창은 전체 페이지에서 나타날 수 있으므로 body도 관찰
+    if (document.body) {
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: false
       });
     }
   }
@@ -656,6 +747,7 @@
       startObserving();
       setTimeout(startAdSkipWatcher, 1000); // 광고 스킵 감시 시작
       setTimeout(startSkipButtonWatcher, 500); // 스킵 버튼 전용 감시 시작
+      setTimeout(startAdBlockerDialogWatcher, 500); // 광고 차단 감지 창 감시 시작
     });
   } else {
     setTimeout(tryAddButtons, 2000);
@@ -663,5 +755,6 @@
     startObserving();
     setTimeout(startAdSkipWatcher, 1000); // 광고 스킵 감시 시작
     setTimeout(startSkipButtonWatcher, 500); // 스킵 버튼 전용 감시 시작
+    setTimeout(startAdBlockerDialogWatcher, 500); // 광고 차단 감지 창 감시 시작
   }
 })();
