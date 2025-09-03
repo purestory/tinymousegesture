@@ -62,11 +62,6 @@
       "type": "module"
     },
     {
-      "matches": ["*://*.youtube.com/*"],
-      "js": ["youtubeAdSkipper.js"],
-      "run_at": "document_start"
-    },
-    {
       "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*"],
       "js": ["adBlocker.js"],
       "run_at": "document_start",
