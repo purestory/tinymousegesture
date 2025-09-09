@@ -1,8 +1,8 @@
-// 광고 및 팝업 차단 스크립트
+// 콘텐츠 필터링 및 팝업 차단 스크립트
 (function() {
   // 이미 로드되었으면 중복 실행 방지
-  if (window.__AdBlockerInitialized) return;
-  window.__AdBlockerInitialized = true;
+  if (window.__ContentFilterInitialized) return;
+  window.__ContentFilterInitialized = true;
   
   // 사이트 확인
   const hostname = window.location.hostname;
@@ -53,10 +53,10 @@
     }
   }
   
-  // CSS로 광고 및 팝업 차단
-  function addBlockingStyles() {
+  // CSS로 원하지 않는 콘텐츠 차단
+  function addFilteringStyles() {
     const styleEl = document.createElement('style');
-    styleEl.id = 'ad-blocker-style';
+    styleEl.id = 'content-filter-style';
     styleEl.textContent = `
       /* 투명한 오버레이 차단 */
       div[style*="position: fixed"][style*="inset: 0"],
@@ -141,12 +141,12 @@
           
           // 원래 창에서 리디렉션 방지 타이머 설정
           setTimeout(() => {
-            // 현재 URL이 광고 URL인지 확인
+            // 현재 URL이 원하지 않는 URL인지 확인
             const currentUrl = window.location.href;
-            const isAdUrl = blockedDomains.some(domain => currentUrl.toLowerCase().includes(domain));
+            const isBlockedUrl = blockedDomains.some(domain => currentUrl.toLowerCase().includes(domain));
             
-            // 광고 URL로 바뀐 경우 원래 페이지로 돌아가기
-            if (isAdUrl || currentUrl !== lastLocation) {
+            // 원하지 않는 URL로 바뀐 경우 원래 페이지로 돌아가기
+            if (isBlockedUrl || currentUrl !== lastLocation) {
               console.log('동영상 클릭 후 리디렉션 차단:', currentUrl);
               history.pushState(null, '', lastLocation);
             }
@@ -155,19 +155,19 @@
       }, true);
     }
     
-    // window.open 재정의 - 광고 팝업 차단
+    // window.open 재정의 - 팝업 차단
     const originalOpen = window.open;
     window.open = function(url, name, specs) {
       if (!url) return null;
       
-      // 광고 URL 확인
-      const isAdUrl = blockedDomains.some(domain => {
+      // 원하지 않는 URL 확인
+      const isBlockedUrl = blockedDomains.some(domain => {
         return url.toLowerCase().includes(domain);
       });
       
-      if (isAdUrl) {
-        console.log('광고 팝업 차단:', url);
-        return null; // 광고 팝업 차단
+      if (isBlockedUrl) {
+        console.log('팝업 차단:', url);
+        return null; // 팝업 차단
       }
       
       // 정상 URL은 원래 함수로 처리
@@ -182,8 +182,8 @@
       
       history.pushState = function(state, title, url) {
         if (url) {
-          const isAdUrl = blockedDomains.some(domain => url.toLowerCase().includes(domain));
-          if (isAdUrl) {
+          const isBlockedUrl = blockedDomains.some(domain => url.toLowerCase().includes(domain));
+          if (isBlockedUrl) {
             console.log('pushState 리디렉션 차단:', url);
             return;
           }
@@ -193,8 +193,8 @@
       
       history.replaceState = function(state, title, url) {
         if (url) {
-          const isAdUrl = blockedDomains.some(domain => url.toLowerCase().includes(domain));
-          if (isAdUrl) {
+          const isBlockedUrl = blockedDomains.some(domain => url.toLowerCase().includes(domain));
+          if (isBlockedUrl) {
             console.log('replaceState 리디렉션 차단:', url);
             return;
           }
@@ -207,7 +207,7 @@
   // 페이지 로드 시 실행
   function init() {
     // 스타일 적용
-    addBlockingStyles();
+    addFilteringStyles();
     
     // 투명 오버레이 제거
     removeTransparentOverlays();

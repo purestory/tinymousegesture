@@ -20,6 +20,7 @@ class YoutubeController {
       if (player) {
         clearInterval(checkForPlayer);
         this.createButtons(player);
+        this.createUtilityButtons(player);
       }
     }, 1000);
   }
@@ -103,6 +104,134 @@ class YoutubeController {
     if (video) {
       video.currentTime += seconds;
     }
+  }
+
+  // 영상을 마지막 부분으로 보내는 함수 (자연스러운 이동)
+  jumpToEnd() {
+    const video = document.querySelector('video');
+    if (!video) return;
+    
+    try {
+      if (video.duration) {
+        const targetTime = video.duration - 3;
+        const currentTime = video.currentTime;
+        
+        // 현재 위치에서 목표 지점까지 점진적으로 이동
+        if (targetTime > currentTime) {
+          const step = Math.min(10, targetTime - currentTime); // 최대 10초씩 이동
+          video.currentTime = currentTime + step;
+          
+          // 목표에 도달할 때까지 반복
+          if (video.currentTime < targetTime - 1) {
+            setTimeout(() => this.jumpToEnd(), 100); // 0.1초 후 재시도
+          } else {
+            video.currentTime = targetTime; // 마지막에 정확한 위치로
+          }
+        } else {
+          video.currentTime = targetTime;
+        }
+      }
+    } catch (e) {
+      console.error('영상 이동 중 오류:', e);
+    }
+  }
+
+  // 페이지 새로고침 함수
+  refreshPage() {
+    window.location.reload();
+  }
+
+  // 유틸리티 버튼들 생성 (끝으로, 새로고침)
+  createUtilityButtons(player) {
+    const leftControls = player.querySelector('.ytp-left-controls');
+    if (!leftControls) return;
+
+    // 기존 유틸리티 버튼들 제거
+    this.removeExistingUtilityButtons();
+
+    const buttonStyle = `
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 8px !important;
+      margin: 0 4px !important;
+      font-size: 13px !important;
+      color: #fff !important;
+      background-color: transparent !important;
+      border: none !important;
+      border-radius: 2px !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      height: 46px !important;
+      min-width: auto !important;
+      font-weight: 500 !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      position: relative !important;
+      z-index: 10 !important;
+      flex-shrink: 0 !important;
+    `;
+
+    // 마지막으로 버튼 생성
+    const jumpButton = document.createElement('button');
+    jumpButton.className = 'ytp-button ytp-custom-jump-button';
+    jumpButton.title = '영상 마지막 부분으로 이동';
+    jumpButton.style.cssText = buttonStyle;
+    jumpButton.textContent = '마지막으로';
+    jumpButton.addEventListener('click', () => this.jumpToEnd());
+
+    // 새로고침 버튼 생성
+    const refreshButton = document.createElement('button');
+    refreshButton.className = 'ytp-button ytp-custom-refresh-button';
+    refreshButton.title = '페이지 새로고침';
+    refreshButton.style.cssText = buttonStyle;
+    refreshButton.textContent = '새로고침';
+    refreshButton.addEventListener('click', () => this.refreshPage());
+
+    // 호버 효과 추가
+    [jumpButton, refreshButton].forEach(button => {
+      button.addEventListener('mouseenter', () => {
+        button.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+      });
+      button.addEventListener('mouseleave', () => {
+        button.style.backgroundColor = 'transparent';
+      });
+    });
+
+    // 버튼 배치 - 음소거 버튼 앞에 배치
+    const muteButton = leftControls.querySelector('.ytp-mute-button');
+    if (muteButton) {
+      muteButton.insertAdjacentElement('beforebegin', jumpButton);
+      jumpButton.insertAdjacentElement('afterend', refreshButton);
+      return;
+    }
+
+    // 볼륨 패널 앞에 배치
+    const volumePanel = leftControls.querySelector('.ytp-volume-panel');
+    if (volumePanel) {
+      volumePanel.insertAdjacentElement('beforebegin', jumpButton);
+      jumpButton.insertAdjacentElement('afterend', refreshButton);
+      return;
+    }
+
+    // 시간 표시 앞에 배치
+    const timeDisplay = leftControls.querySelector('.ytp-time-display');
+    if (timeDisplay) {
+      timeDisplay.insertAdjacentElement('beforebegin', jumpButton);
+      jumpButton.insertAdjacentElement('afterend', refreshButton);
+      return;
+    }
+
+    // 마지막: 왼쪽 컨트롤 맨 뒤에 추가
+    leftControls.appendChild(jumpButton);
+    leftControls.appendChild(refreshButton);
+  }
+
+  // 기존 유틸리티 버튼들 제거
+  removeExistingUtilityButtons() {
+    document.querySelectorAll('.ytp-custom-jump-button, .ytp-custom-refresh-button').forEach(button => {
+      button.remove();
+    });
   }
 }
 
