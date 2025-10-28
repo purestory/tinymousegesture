@@ -171,10 +171,14 @@ class BackgroundManager {
       chrome.tabs.create({ url: searchUrl });
     } else if (info.menuItemId === 'searchSupjav') {
       const searchUrl = `https://supjav.com/?s=${encodeURIComponent(info.selectionText)}`;
+      const subtitleUrl = `https://www.subtitlecat.com/index.php?search=${encodeURIComponent(info.selectionText)}`;
       chrome.tabs.create({ url: searchUrl });
+      chrome.tabs.create({ url: subtitleUrl });
     } else if (info.menuItemId === 'searchMissAV') {
       const searchUrl = `https://missav123.com/ko/search/${encodeURIComponent(info.selectionText)}`;
+      const subtitleUrl = `https://www.subtitlecat.com/index.php?search=${encodeURIComponent(info.selectionText)}`;
       chrome.tabs.create({ url: searchUrl });
+      chrome.tabs.create({ url: subtitleUrl });
     }
   }
 
