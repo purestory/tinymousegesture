@@ -63,7 +63,7 @@
     },
     {
       "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*"],
-      "js": ["adBlocker.js"],
+      "js": ["contentFilter.js"],
       "run_at": "document_start",
       "all_frames": true
     },
