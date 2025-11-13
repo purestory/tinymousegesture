@@ -302,9 +302,9 @@ class YoutubeController {
       return;
     }
 
-    // 더 많은 단계로 나누어 이동 (매우 은밀하게)
-    const steps = Math.min(Math.ceil(timeDiff / 1.5), 15); // 최대 15단계로 증가
-    const stepSize = timeDiff / steps;
+    // 최소 5초씩 이동하는 단계로 나누기 (마지막 단계 제외)
+    const stepSize = 5; // 각 단계별 최소 5초 이동
+    const steps = Math.max(1, Math.floor(timeDiff / stepSize)); // 마지막 단계 제외
     let currentStep = 0;
 
     const moveStep = () => {
@@ -329,28 +329,25 @@ class YoutubeController {
         return;
       }
 
-      // 다음 위치 계산 (더 큰 랜덤 요소 추가)
+      // 다음 위치 계산 (정확히 5초씩 이동)
       const nextTime = startTime + (stepSize * (currentStep + 1));
-      const randomVariation = (Math.random() - 0.5) * 0.8; // ±0.4초 랜덤으로 증가
-      const newTime = Math.max(startTime, nextTime + randomVariation);
       
-      // 때때로 약간 뒤로 이동하기도 함 (더 자연스럽게)
-      if (Math.random() < 0.1 && currentStep > 2) { // 10% 확률로 뒤로
-        video.currentTime = Math.max(startTime, newTime - 1);
+      // 마지막 단계 전까지는 5초씩 정확히 이동
+      if (currentStep < steps - 1) {
+        video.currentTime = Math.min(nextTime, targetTime);
       } else {
-        video.currentTime = newTime;
+        // 마지막 단계에서는 정확한 목표 위치로 이동
+        video.currentTime = targetTime;
       }
       
       currentStep++;
       
-      // 더 긴 랜덤 딜레이 (200~800ms)
-      const delay = 200 + Math.random() * 600;
-      setTimeout(moveStep, delay);
+      // 고정 딜레이 0.3초 (300ms)
+      setTimeout(moveStep, 300);
     };
 
-    // 첫 번째 단계 시작 (더 긴 초기 딜레이)
-    const initialDelay = 100 + Math.random() * 300;
-    setTimeout(moveStep, initialDelay);
+    // 첫 번째 단계 시작 (고정 딜레이 0.3초)
+    setTimeout(moveStep, 300);
   }
 
   // 유튜브 건너뛰기 버튼 표시 여부 확인
