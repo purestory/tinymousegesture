@@ -240,11 +240,9 @@ class YoutubeController {
     console.log('🔍 스킵 완료 후 경고화면 확인...');
     
     if (this.isAdBlockWarningShown()) {
-      console.log('⚠️ 광고 스킵 후 경고 화면이 감지되었습니다. 1초 후 새로고침...');
-      setTimeout(() => {
-        console.log('🔄 경고 화면으로 인한 페이지 새로고침 실행');
-        window.location.reload();
-      }, 1000);
+      console.log('⚠️ 광고 스킵 후 경고 화면이 감지되었습니다. 즉시 새로고침...');
+      console.log('🔄 경고 화면으로 인한 페이지 새로고침 실행');
+      window.location.reload();
     } else {
       console.log('✅ 경고화면 없음 - 정상 상태');
     }
@@ -320,11 +318,11 @@ class YoutubeController {
         video.currentTime = targetTime;
         this.isProcessing = false;
         console.log('✅ 광고 스킵 완료 (은밀하게)');
-        
-        // 스킵 완료 후 3초 뒤에 경고화면 확인 (더 여유있게)
+
+        // 스킵 완료 후 1초 뒤에 경고화면 확인
         setTimeout(() => {
           this.checkWarningAfterSkip();
-        }, 3000);
+        }, 1000);
         
         return;
       }
