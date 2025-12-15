@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "priority": 1,
+    "priority": 2,
     "action": {
       "type": "redirect",
       "redirect": {
@@ -10,6 +10,20 @@
     },
     "condition": {
       "regexFilter": "^https://m\\.dcinside\\.com/board/([^/]+)/(\\d+)(?:\\?.*)?$",
+      "resourceTypes": ["main_frame"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "regexSubstitution": "https://gall.dcinside.com/mgallery/board/lists/?id=\\1"
+      }
+    },
+    "condition": {
+      "regexFilter": "^https://m\\.dcinside\\.com/board/([^/]+)(?:\\?.*)?$",
       "resourceTypes": ["main_frame"]
     }
   }
