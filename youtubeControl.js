@@ -35,8 +35,9 @@ function injectedScript() {
         return;
       }
 
+      // 건너뛸 수 없는 광고 처리
       video.muted = true;
-      if (player) player.style.visibility = 'hidden';
+      video.playbackRate = 16;
 
     } else if (wasAdPlaying) {
       console.log('[YT Ad Skipper] 광고 종료. 비디오 상태를 복원합니다.');
@@ -44,7 +45,6 @@ function injectedScript() {
         video.muted = originalVideoState.muted;
         video.playbackRate = originalVideoState.playbackRate;
       }
-      if (player) player.style.visibility = 'visible';
       wasAdPlaying = false;
     }
   };
@@ -55,8 +55,10 @@ function injectedScript() {
 
 class YoutubeController {
   constructor() {
-    this.skipTime = 5;
+    this.skipTime = 10; // 기본 스킵 시간 10초로 설정
+    this.isAdPlaying = false;
     this.observer = null;
+    this.adStateInterval = null; // 인터벌 ID 저장
     this.initialize();
   }
 
@@ -64,7 +66,8 @@ class YoutubeController {
     this.initializeState();
     this.injectScript();
     this.setupMessageListener();
-    this.setupControlsObserver(); // MutationObserver를 사용한 새로운 방식
+    this.setupControlsObserver();
+    this.setupAdStateMonitor(); // 광고 상태 모니터링 시작
   }
 
   injectScript() {
@@ -84,7 +87,7 @@ class YoutubeController {
   async initializeState() {
     try {
       const data = await chrome.storage.local.get('youtubeSkipTime');
-      this.skipTime = data.youtubeSkipTime || 5;
+      this.skipTime = data.youtubeSkipTime || 10; // 저장된 값이 없으면 10초
     } catch (error) {
       console.error('유튜브 컨트롤러 초기화 오류:', error);
     }
@@ -94,37 +97,41 @@ class YoutubeController {
     chrome.runtime.onMessage.addListener((request) => {
       if (request.action === 'updateSkipTime') {
         this.skipTime = request.skipTime || this.skipTime;
-        this.updateButtonTitles();
+        this.updateButtonTitles(); // 시간이 변경되면 버튼 타이틀 업데이트
       }
     });
   }
 
-  // 유튜브의 동적 UI 변경에 대응하기 위해 MutationObserver 사용
   setupControlsObserver() {
-    this.observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        // ytp-left-controls가 추가되었고, 우리 버튼이 아직 없다면 버튼 생성
-        const leftControls = document.querySelector('.ytp-left-controls');
-        if (leftControls && !document.querySelector('.ytp-custom-forward-button')) {
-          const player = document.querySelector('.html5-video-player');
-          if (player) {
-            this.createButtons(player);
-          }
-        }
+    this.observer = new MutationObserver(() => {
+      const leftControls = document.querySelector('.ytp-left-controls');
+      if (leftControls && !document.querySelector('.ytp-custom-forward-button')) {
+          this.createButtons();
       }
     });
 
-    this.observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    this.observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  createButtons(player) {
-    const leftControls = player.querySelector('.ytp-left-controls');
+  // 광고 상태를 주기적으로 확인하여 버튼 상태 변경
+  setupAdStateMonitor() {
+    if (this.adStateInterval) clearInterval(this.adStateInterval);
+    this.adStateInterval = setInterval(() => {
+      const player = document.querySelector('#movie_player');
+      const isAd = player && player.classList.contains('ad-showing');
+
+      if (isAd !== this.isAdPlaying) {
+        this.isAdPlaying = isAd;
+        this.updateButtonsForAdState();
+      }
+    }, 500);
+  }
+
+  createButtons() {
+    const leftControls = document.querySelector('.ytp-left-controls');
     if (!leftControls) return;
 
-    this.removeExistingButtons(); // 중복 생성을 막기 위해 기존 버튼 제거
+    this.removeExistingButtons();
 
     const playButton = leftControls.querySelector('.ytp-play-button');
     if (!playButton) return;
@@ -147,7 +154,8 @@ class YoutubeController {
     playButton.insertAdjacentElement('afterend', forwardButton);
     playButton.insertAdjacentElement('afterend', backwardButton);
 
-    this.updateButtonTitles();
+    this.updateButtonTitles(); // 초기 타이틀 설정
+    this.updateButtonsForAdState(); // 현재 광고 상태에 맞게 버튼 즉시 업데이트
 
     [backwardButton, forwardButton].forEach(button => {
       button.addEventListener('mouseover', () => { button.style.opacity = '1'; });
@@ -155,12 +163,33 @@ class YoutubeController {
     });
   }
 
-  updateButtonTitles() {
-    const backwardButton = document.querySelector('.ytp-custom-backward-button');
-    if (backwardButton) backwardButton.title = `${this.skipTime}초 뒤로`;
-
+  // 광고 상태에 따라 버튼의 기능과 모양을 업데이트
+  updateButtonsForAdState() {
     const forwardButton = document.querySelector('.ytp-custom-forward-button');
-    if (forwardButton) forwardButton.title = `${this.skipTime}초 앞으로`;
+    const backwardButton = document.querySelector('.ytp-custom-backward-button');
+
+    if (!forwardButton || !backwardButton) return;
+
+    if (this.isAdPlaying) {
+      forwardButton.onclick = () => this.skip(30);
+      forwardButton.title = '30초 건너뛰기';
+      backwardButton.style.display = 'none'; // 광고 중에는 뒤로가기 버튼 숨김
+    } else {
+      forwardButton.onclick = () => this.skip(this.skipTime);
+      backwardButton.style.display = 'flex'; // 광고 끝나면 다시 표시
+      this.updateButtonTitles(); // 일반 상태의 타이틀로 복원
+    }
+  }
+
+  updateButtonTitles() {
+    // 광고 중이 아닐 때만 일반 타이틀로 설정
+    if (!this.isAdPlaying) {
+      const backwardButton = document.querySelector('.ytp-custom-backward-button');
+      if (backwardButton) backwardButton.title = `${this.skipTime}초 뒤로`;
+
+      const forwardButton = document.querySelector('.ytp-custom-forward-button');
+      if (forwardButton) forwardButton.title = `${this.skipTime}초 앞으로`;
+    }
   }
 
   skip(seconds) {
@@ -174,6 +203,7 @@ class YoutubeController {
 
   destroy() {
     if (this.observer) this.observer.disconnect();
+    if (this.adStateInterval) clearInterval(this.adStateInterval);
     this.removeExistingButtons();
     console.log('YoutubeController 정리 완료');
   }
