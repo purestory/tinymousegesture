@@ -75,6 +75,7 @@ class YoutubeController {
     this.initializeState();
     this.setupControls(); // UI 버튼 설정
     this.injectScript(); // 핵심 로직 주입
+    this.setupMessageListener(); // 메시지 리스너 설정
   }
 
   // 페이지에 광고 스킵 스크립트를 주입하는 함수
@@ -107,10 +108,24 @@ class YoutubeController {
     }
   }
 
-  // UI 관련 설정은 그대로 유지
+  // 백그라운드 스크립트로부터 메시지를 수신하여 skipTime을 업데이트
+  setupMessageListener() {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      if (request.action === 'updateSkipTime') {
+        this.skipTime = request.skipTime || this.skipTime;
+        console.log('스킵 시간이 업데이트되었습니다:', this.skipTime);
+        // 버튼이 이미 생성되었다면 타이틀 업데이트
+        this.updateButtonTitles();
+      }
+      return true; // 비동기 응답을 위해 true를 반환할 수 있습니다.
+    });
+  }
+
+  // UI 관련 설정
   setupControls() {
     this.removeExistingButtons();
     
+    // 플레이어가 로드될 때까지 기다립니다.
     const checkForPlayer = setInterval(() => {
       const player = document.querySelector('.html5-video-player');
       if (player) {
@@ -129,44 +144,51 @@ class YoutubeController {
     const playButton = leftControls.querySelector('.ytp-play-button');
     if (!playButton) return;
 
+    // SVG 아이콘 스타일
     const svgStyle = `
-      width: 32px !important;
-      height: 32px !important;
-      min-width: 32px !important;
-      min-height: 32px !important;
+      width: 100%; height: 100%;
       fill: currentColor;
       filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
     `;
+    const buttonStyle = `
+        width: 48px; height: 48px;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+    `;
 
+    // 뒤로가기 버튼
     const backwardButton = playButton.cloneNode(true);
     backwardButton.className = 'ytp-button ytp-custom-backward-button';
-    backwardButton.innerHTML = `
-      <svg style="${svgStyle}" viewBox="0 0 24 24">
-        <path d="M21,7L12,12l9,5V7z M11,7v10l-9-5L11,7z"/>
-      </svg>
-    `;
-    Object.assign(backwardButton.style, { margin: '0 2px', opacity: '0.9' });
-    backwardButton.title = `${this.skipTime}초 뒤로`;
+    backwardButton.innerHTML = `<div style="${buttonStyle}"><svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M11.5,12l8.5,6V6M11.5,6v12H10V6M10,12L1.5,18V6L10,12z"></path></svg></div>`;
+    Object.assign(backwardButton.style, { margin: '0 4px', opacity: '0.9' });
     backwardButton.onclick = () => this.skip(-this.skipTime);
 
+    // 앞으로가기 버튼
     const forwardButton = playButton.cloneNode(true);
     forwardButton.className = 'ytp-button ytp-custom-forward-button';
-    forwardButton.innerHTML = `
-      <svg style="${svgStyle}" viewBox="0 0 24 24">
-        <path d="M3,7v10l9-5L3,7z M13,7v10l9-5L13,7z"/>
-      </svg>
-    `;
-    Object.assign(forwardButton.style, { margin: '0 2px', opacity: '0.9' });
-    forwardButton.title = `${this.skipTime}초 앞으로`;
+    forwardButton.innerHTML = `<div style="${buttonStyle}"><svg style="${svgStyle}" viewBox="0 0 24 24"><path d="M12.5,12l-8.5,6V6M12.5,18V6h1.5V18M14,12l8.5,6V6L14,12z"></path></svg></div>`;
+    Object.assign(forwardButton.style, { margin: '0 4px', opacity: '0.9' });
     forwardButton.onclick = () => this.skip(this.skipTime);
 
+    // 버튼 추가
     playButton.insertAdjacentElement('afterend', forwardButton);
     playButton.insertAdjacentElement('afterend', backwardButton);
 
+    this.updateButtonTitles(); // 버튼 타이틀 초기 설정
+
+    // 마우스 호버 효과
     [backwardButton, forwardButton].forEach(button => {
       button.addEventListener('mouseover', () => { button.style.opacity = '1'; });
       button.addEventListener('mouseout', () => { button.style.opacity = '0.9'; });
     });
+  }
+
+  updateButtonTitles() {
+    const backwardButton = document.querySelector('.ytp-custom-backward-button');
+    if (backwardButton) backwardButton.title = `${this.skipTime}초 뒤로`;
+
+    const forwardButton = document.querySelector('.ytp-custom-forward-button');
+    if (forwardButton) forwardButton.title = `${this.skipTime}초 앞으로`;
   }
 
   skip(seconds) {
@@ -188,12 +210,22 @@ class YoutubeController {
   }
 }
 
+// 페이지 로드 시 컨트롤러 인스턴스 생성
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!window.youtubeController) {
+      window.youtubeController = new YoutubeController();
+    }
+  });
+} else {
+  if (!window.youtubeController) {
+    window.youtubeController = new YoutubeController();
+  }
+}
+
 // 페이지 언로드 시 정리
 window.addEventListener('beforeunload', () => {
   if (window.youtubeController) {
     window.youtubeController.destroy();
   }
 });
-
-// 전역 변수로 저장하여 나중에 정리할 수 있도록 함
-window.youtubeController = new YoutubeController();
