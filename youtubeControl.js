@@ -250,125 +250,58 @@ class YoutubeController {
 
   // 광고 끝나기 3초 전으로 이동하는 함수 (광고일 때만 작동)
   jumpToEnd() {
-    // 중복 실행 방지
-    if (this.isProcessing) {
-      console.log('⏳ 이미 처리 중입니다...');
-      return;
-    }
+    if (this.isProcessing) return;
 
-    // 광고 감지 상태 디버깅
-    this.debugAdDetection();
-
-    // 광고가 아니면 작동하지 않음
-    if (!this.isAdPlaying()) {
-      console.log('❌ 현재 광고가 재생 중이 아닙니다. 광고일 때만 스킵 가능합니다.');
-      return;
-    }
+    // 1. 광고 재생 중이 아니면 아무것도 하지 않음
+    if (!this.isAdPlaying()) return;
 
     this.isProcessing = true;
+
+    // 2. 건너뛰기 버튼이 있으면 즉시 클릭 (가장 안전한 방법)
+    if (this.clickSkipButton()) {
+      console.log('✅ "광고 건너뛰기" 버튼을 클릭했습니다.');
+      this.isProcessing = false;
+      return;
+    }
+
+    // 3. 건너뛸 수 없는 광고 처리: 음소거 및 최대 배속
     const video = document.querySelector('video');
-    if (!video) {
-      this.isProcessing = false;
-      return;
+    if (video) {
+      console.log('🔇 건너뛸 수 없는 광고입니다. 음소거 및 최대 배속으로 재생합니다.');
+      video.muted = true;
+      video.playbackRate = 16;
     }
-    
-    try {
-      if (video.duration && video.duration > 0) {
-        // 광고 끝나기 3초 전으로 이동 (광고가 3초보다 짧으면 시작 지점으로)
-        const targetTime = video.duration > 3 ? video.duration - 3 : 0;
-        const currentTime = video.currentTime;
-        
-        console.log(`🎯 광고 스킵 시작: ${currentTime.toFixed(1)}초 → ${targetTime.toFixed(1)}초 (은밀하게)`);
-        
-        // 더욱 은밀하고 점진적인 이동
-        this.stealthSeekTo(video, targetTime, currentTime);
-      } else {
-        this.isProcessing = false;
-      }
-    } catch (e) {
-      console.error('광고 이동 중 오류:', e);
+
+    // 잠시 후 처리 상태 해제
+    setTimeout(() => {
       this.isProcessing = false;
-    }
+    }, 1000);
   }
 
-  // 매우 은밀한 시크 함수 (감지 회피 극대화)
-  stealthSeekTo(video, targetTime, startTime) {
-    const timeDiff = targetTime - startTime;
-    
-    if (timeDiff <= 0) {
-      this.isProcessing = false;
-      return;
-    }
 
-    // 최소 5초씩 이동하는 단계로 나누기 (마지막 단계 제외)
-    const stepSize = 5; // 각 단계별 최소 5초 이동
-    const steps = Math.max(1, Math.floor(timeDiff / stepSize)); // 마지막 단계 제외
-    let currentStep = 0;
-
-    const moveStep = () => {
-      // 스킵 중에 유튜브 건너뛰기 버튼이 나타나면 중단
-      if (this.isYouTubeSkipButtonVisible()) {
-        console.log('⏹️ 유튜브 건너뛰기 버튼 감지! 은밀한 스킵 중단');
-        this.isProcessing = false;
-        return;
-      }
-
-      if (currentStep >= steps) {
-        // 최종 위치로 정확히 이동
-        video.currentTime = targetTime;
-        this.isProcessing = false;
-        console.log('✅ 광고 스킵 완료 (은밀하게)');
-
-        // 스킵 완료 후 1초 뒤에 경고화면 확인
-        setTimeout(() => {
-          this.checkWarningAfterSkip();
-        }, 1000);
-        
-        return;
-      }
-
-      // 다음 위치 계산 (정확히 5초씩 이동)
-      const nextTime = startTime + (stepSize * (currentStep + 1));
-      
-      // 마지막 단계 전까지는 5초씩 정확히 이동
-      if (currentStep < steps - 1) {
-        video.currentTime = Math.min(nextTime, targetTime);
-      } else {
-        // 마지막 단계에서는 정확한 목표 위치로 이동
-        video.currentTime = targetTime;
-      }
-      
-      currentStep++;
-      
-      // 고정 딜레이 0.3초 (300ms)
-      setTimeout(moveStep, 300);
-    };
-
-    // 첫 번째 단계 시작 (고정 딜레이 0.3초)
-    setTimeout(moveStep, 300);
-  }
-
-  // 유튜브 건너뛰기 버튼 표시 여부 확인
+  // 유튜브 건너뛰기 버튼 표시 여부 확인 (더욱 강화된 버전)
   isYouTubeSkipButtonVisible() {
     const skipButtonSelectors = [
-      '.ytp-skip-ad-button',           // 기본 스킵 버튼
-      '.ytp-ad-skip-button',           // 대체 스킵 버튼
-      '#skip-button\\:w',              // ID 기반 스킵 버튼
-      'button[class*="skip"]',         // 클래스에 skip이 포함된 버튼
-      '[class*="ytp-skip"]'            // ytp-skip이 포함된 요소
+      '.ytp-ad-skip-button-modern',   // 최신 UI 스킵 버튼
+      '.ytp-skip-ad-button',          // 클래식 스킵 버튼
+      '.ytp-ad-skip-button',          // 이전 스킵 버튼
+      'button[id*="skip-button"]',    // ID에 'skip-button'을 포함하는 버튼
+      '.ytp-ad-skip-button-slot',     // 스킵 버튼을 담는 컨테이너
+      'yt-button-renderer[id*="skip"]', // YouTube 웹 컴포넌트 기반 버튼
     ];
 
     for (const selector of skipButtonSelectors) {
       const skipButton = document.querySelector(selector);
       
+      // 버튼이 존재하고, 화면에 보이며(offsetParent), 비활성화 상태가 아닐 때
       if (skipButton && 
           skipButton.offsetParent !== null && 
-          skipButton.style.display !== 'none' &&
           !skipButton.disabled) {
         
-        // 버튼이 실제로 보이는지 확인
+        // 버튼이 실제로 클릭 가능한지 확인 (너비와 높이가 0보다 큼)
         const rect = skipButton.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
+          console.log(`🔍 건너뛰기 버튼 (표시됨) 감지: ${selector}`);
           return true;
         }
       }
@@ -470,17 +403,34 @@ class YoutubeController {
       clearInterval(this.autoSkipInterval);
     }
 
-    // 5초마다 광고 확인 및 자동 스킵
+    let wasAdPlaying = false;
+
+    // 1초마다 광고 및 경고 화면 확인
     this.autoSkipInterval = setInterval(() => {
-      if (this.isAdPlaying() && !this.isProcessing) {
-        const video = document.querySelector('video');
-        if (video && video.duration && video.currentTime > 5) {
-          // 광고가 5초 이상 재생되었으면 자동 스킵
-          console.log('🤖 자동 광고 스킵 실행');
-          this.jumpToEnd();
-        }
+      const isCurrentlyAd = this.isAdPlaying();
+
+      // 1. 경고 화면이 최우선 처리 대상
+      if (this.handleAntiAdblock()) {
+        return;
       }
-    }, 5000);
+
+      // 2. 광고 스킵 로직
+      if (isCurrentlyAd && !this.isProcessing) {
+        console.log('🤖 자동 광고 스킵 실행');
+        this.jumpToEnd();
+        wasAdPlaying = true;
+      }
+      // 3. 광고가 끝난 직후 원래 상태로 복구
+      else if (wasAdPlaying && !isCurrentlyAd) {
+        const video = document.querySelector('video');
+        if (video) {
+          console.log('🎬 광고가 종료되었습니다. 원래 재생 상태로 복구합니다.');
+          video.muted = false;
+          video.playbackRate = 1.0;
+        }
+        wasAdPlaying = false;
+      }
+    }, 1000);
   }
 
   // 자동 스킵 비활성화
@@ -492,6 +442,55 @@ class YoutubeController {
   }
 
   // 클래스 정리 (메모리 누수 방지)
+  handleAntiAdblock() {
+    const warningSelector = 'ytd-enforcement-message-view-model, [class*="enforcement-message"]';
+    const warningElement = document.querySelector(warningSelector);
+
+    if (warningElement && warningElement.offsetParent !== null) {
+      console.log('🚫 광고 차단 경고 화면을 감지했습니다. 복구를 시도합니다.');
+
+      // 1. '닫기' 버튼이 있으면 클릭
+      const closeButton = warningElement.querySelector('yt-button-renderer#dismiss-button, button.ytp-button');
+      if (closeButton) {
+        console.log('Attempting to click the close button.');
+        closeButton.click();
+      }
+
+      // 2. 경고 화면 강제 제거
+      console.log('Removing the adblock warning element from the DOM.');
+      warningElement.remove();
+
+      // 3. 비디오 강제 재생
+      const video = document.querySelector('video');
+      if (video && video.paused) {
+        console.log('Video is paused, attempting to play.');
+        video.play();
+      }
+      return true;
+    }
+    return false;
+  }
+
+  clickSkipButton() {
+    const skipButtonSelectors = [
+      '.ytp-ad-skip-button-modern', // 최신 UI 스킵 버튼
+      '.ytp-skip-ad-button',      // 클래식 스킵 버튼
+      '.ytp-ad-skip-button',      // 이전 스킵 버튼
+      'button[class*="skip"]',    // 'skip'을 포함하는 모든 버튼
+    ];
+
+    for (const selector of skipButtonSelectors) {
+      const skipButton = document.querySelector(selector);
+      // 버튼이 존재하고, 화면에 보이며, 비활성화 상태가 아닐 때
+      if (skipButton && skipButton.offsetParent !== null && !skipButton.disabled) {
+        console.log(`✅ 건너뛰기 버튼 감지 및 클릭: ${selector}`);
+        skipButton.click(); // 버튼 클릭
+        return true; // 클릭 성공 시 true 반환
+      }
+    }
+    return false; // 적절한 버튼을 찾지 못함
+  }
+
   destroy() {
     // 자동 스킵 인터벌 정리
     if (this.autoSkipInterval) {
