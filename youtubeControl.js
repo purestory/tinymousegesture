@@ -240,9 +240,10 @@ class YoutubeController {
     console.log('🔍 스킵 완료 후 경고화면 확인...');
     
     if (this.isAdBlockWarningShown()) {
-      console.log('⚠️ 광고 스킵 후 경고 화면이 감지되었습니다. 즉시 새로고침...');
-      console.log('🔄 경고 화면으로 인한 페이지 새로고침 실행');
-      window.location.reload();
+      console.log('⚠️ 광고 스킵 후 경고 화면이 감지되었습니다.');
+      console.log('ℹ️ 새로고침 기능이 비활성화되어 있습니다.');
+      // 새로고침 비활성화됨
+      // window.location.reload();
     } else {
       console.log('✅ 경고화면 없음 - 정상 상태');
     }
