@@ -378,9 +378,11 @@ class YoutubeController {
     return false;
   }
 
-  // 페이지 새로고침 함수
+  // 페이지 새로고침 함수 (비활성화됨)
   refreshPage() {
-    window.location.reload();
+    // 새로고침 비활성화됨
+    // window.location.reload();
+    console.log('ℹ️ 새로고침 기능이 비활성화되어 있습니다.');
   }
 
   // 유틸리티 버튼들 생성 (광고스킵)
