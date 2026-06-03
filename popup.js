@@ -44,13 +44,17 @@ class PopupManager {
       // 1. storage에서 데이터 가져오기
       const storageData = await chrome.storage.local.get(['searchPrefix', 'youtubeSkipTime', 'isAdBlockerEnabled', 'dcRedirectEnabled']);
 
-      // 2. background에서 isUnblocked 상태 가져오기
-      const backgroundState = await chrome.runtime.sendMessage({ action: 'getUnblockState' });
+      // 2. 현재 탭의 복사방지 해제 상태 가져오기
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      const backgroundState = await chrome.runtime.sendMessage({
+        action: 'getUnblockState',
+        tabId: tab?.id
+      });
 
       // 3. 데이터를 합쳐 UI 초기화
       this.initializeUI({
           ...storageData, // searchPrefix, youtubeSkipTime, isAdBlockerEnabled, dcRedirectEnabled
-          isUnblocked: backgroundState?.isUnblocked || false // background 응답 사용
+          isUnblocked: backgroundState?.isUnblocked || false
       });
 
       this.setupEventListeners();

@@ -2,8 +2,17 @@ class YoutubeController {
   constructor() {
     this.skipTime = 5; // 기본값 5초
     this.isProcessing = false; // 중복 실행 방지
+    this.ensureControlsTimer = null;
+    this.playerPollInterval = null;
+    this.playerObserver = null;
+    this.boundScheduleEnsureControls = () => this.scheduleEnsureControls();
+    this.boundOnYoutubePageUpdate = () => {
+      this.scheduleEnsureControls();
+      this.startPlayerPolling();
+    };
+    this.ytNavigationEvents = ['yt-navigate-finish', 'yt-page-data-updated', 'yt-player-updated'];
     this.initializeState();
-    this.setupControls();
+    this.installControlHooks();
   }
 
   async initializeState() {
@@ -15,18 +24,85 @@ class YoutubeController {
     }
   }
 
-  setupControls() {
-    // 기존 버튼들 먼저 제거
-    this.removeExistingButtons();
-    
-    const checkForPlayer = setInterval(() => {
-      const player = document.querySelector('.html5-video-player');
-      if (player) {
-        clearInterval(checkForPlayer);
-        this.createButtons(player);
-        this.createUtilityButtons(player);
+  installControlHooks() {
+    this.ytNavigationEvents.forEach((eventName) => {
+      document.addEventListener(eventName, this.boundOnYoutubePageUpdate);
+    });
+
+    this.playerObserver = new MutationObserver(() => {
+      if (this.areControlsMissing()) {
+        this.scheduleEnsureControls();
       }
-    }, 1000);
+    });
+
+    const observeTarget = document.body || document.documentElement;
+    if (observeTarget) {
+      this.playerObserver.observe(observeTarget, { childList: true, subtree: true });
+    }
+
+    this.scheduleEnsureControls();
+    this.startPlayerPolling();
+  }
+
+  areControlsMissing() {
+    const player = document.querySelector('.html5-video-player');
+    if (!player) return false;
+
+    const playButton = player.querySelector('.ytp-left-controls .ytp-play-button');
+    if (!playButton) return false;
+
+    return !player.querySelector('.ytp-custom-backward-button') ||
+      !player.querySelector('.ytp-custom-jump-button');
+  }
+
+  scheduleEnsureControls() {
+    if (this.ensureControlsTimer) {
+      clearTimeout(this.ensureControlsTimer);
+    }
+    // YouTube React 렌더 완료 후 DOM이 준비되도록 짧게 대기
+    this.ensureControlsTimer = setTimeout(() => this.ensureControls(), 350);
+  }
+
+  ensureControls() {
+    const player = document.querySelector('.html5-video-player');
+    if (!player) return;
+
+    const leftControls = player.querySelector('.ytp-left-controls');
+    const playButton = leftControls?.querySelector('.ytp-play-button');
+    if (!leftControls || !playButton) return;
+
+    const hasSkipButtons = !!player.querySelector('.ytp-custom-backward-button');
+    const hasJumpButton = !!player.querySelector('.ytp-custom-jump-button');
+    if (hasSkipButtons && hasJumpButton) return;
+
+    if (!hasSkipButtons) {
+      this.createButtons(player);
+    }
+    if (!player.querySelector('.ytp-custom-jump-button')) {
+      this.createUtilityButtons(player);
+    }
+  }
+
+  startPlayerPolling() {
+    if (this.playerPollInterval) return;
+
+    let attempts = 0;
+    const maxAttempts = 60;
+
+    this.playerPollInterval = setInterval(() => {
+      this.ensureControls();
+      attempts++;
+
+      const player = document.querySelector('.html5-video-player');
+      const isComplete = player &&
+        player.querySelector('.ytp-custom-backward-button') &&
+        player.querySelector('.ytp-custom-jump-button');
+
+      if (isComplete || attempts >= maxAttempts) {
+        clearInterval(this.playerPollInterval);
+        this.playerPollInterval = null;
+      }
+    }, 500);
   }
 
   createButtons(player) {
@@ -496,6 +572,25 @@ class YoutubeController {
 
   // 클래스 정리 (메모리 누수 방지)
   destroy() {
+    if (this.ensureControlsTimer) {
+      clearTimeout(this.ensureControlsTimer);
+      this.ensureControlsTimer = null;
+    }
+
+    if (this.playerPollInterval) {
+      clearInterval(this.playerPollInterval);
+      this.playerPollInterval = null;
+    }
+
+    if (this.playerObserver) {
+      this.playerObserver.disconnect();
+      this.playerObserver = null;
+    }
+
+    this.ytNavigationEvents.forEach((eventName) => {
+      document.removeEventListener(eventName, this.boundOnYoutubePageUpdate);
+    });
+
     // 자동 스킵 인터벌 정리
     if (this.autoSkipInterval) {
       clearInterval(this.autoSkipInterval);

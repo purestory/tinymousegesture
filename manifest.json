@@ -59,6 +59,7 @@
     {
       "matches": ["*://*.youtube.com/*"],
       "js": ["youtubeControl.js"],
+      "run_at": "document_idle",
       "type": "module"
     },
     {

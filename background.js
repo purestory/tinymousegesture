@@ -3,8 +3,8 @@ import { getMessage } from './i18n/messages.js';
 
 class BackgroundManager {
   constructor() {
-    this.currentState = { 
-      isUnblocked: false,
+    this.tabUnblockState = new Map();
+    this.currentState = {
       isAdBlockerEnabled: false
     };
     this.currentPrefix = '';
@@ -14,7 +14,8 @@ class BackgroundManager {
       this.setupContextMenus();
     });
     this.setupMessageListeners();
-    this.updateIcon(this.currentState.isUnblocked); // 초기 아이콘 설정
+    this.updateIcon(false);
+    this.setupTabListeners();
     this.loadSettings();  // 저장된 설정 불러오기
     this.setupDCInsideRedirect(); // 디시인사이드 리다이렉트 설정
   }
@@ -51,10 +52,12 @@ class BackgroundManager {
         this.currentPrefix = request.prefix;
         this.updateContextMenu();
       } else if (request.action === 'toggleUnblock') {
-        this.toggleUnblockState(request.tabId);
-        sendResponse({newState: this.currentState.isUnblocked});
+        const tabId = request.tabId ?? sender.tab?.id;
+        this.setTabUnblockState(tabId, request.state);
+        sendResponse({ newState: this.getTabUnblockState(tabId) });
       } else if (request.action === 'getUnblockState') {
-        sendResponse({ isUnblocked: this.currentState.isUnblocked });
+        const tabId = request.tabId ?? sender.tab?.id;
+        sendResponse({ isUnblocked: this.getTabUnblockState(tabId) });
       } else if (request.action === 'updateSkipTime') {
         chrome.storage.local.set({ youtubeSkipTime: request.skipTime });
         sendResponse({status: "ok"});
@@ -184,12 +187,47 @@ class BackgroundManager {
 
   setupMessageListeners() {
   }
+
+  setupTabListeners() {
+    chrome.tabs.onActivated.addListener((activeInfo) => {
+      this.updateIcon(this.getTabUnblockState(activeInfo.tabId));
+    });
+
+    chrome.tabs.onRemoved.addListener((tabId) => {
+      this.tabUnblockState.delete(tabId);
+    });
+  }
+
+  getTabUnblockState(tabId) {
+    if (!tabId) return false;
+    return this.tabUnblockState.get(tabId) || false;
+  }
+
+  async setTabUnblockState(tabId, isUnblocked) {
+    if (!tabId) return;
+
+    this.tabUnblockState.set(tabId, !!isUnblocked);
+
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (activeTab?.id === tabId) {
+      this.updateIcon(!!isUnblocked);
+    }
+
+    chrome.tabs.sendMessage(tabId, {
+      action: 'toggleUnblock',
+      state: !!isUnblocked
+    }).catch(() => {});
+
+    chrome.runtime.sendMessage({
+      action: 'updatePopupState',
+      isUnblocked: !!isUnblocked
+    }).catch(() => {});
+  }
   
   // 저장된 설정 불러오기
   async loadSettings() {
     try {
-      const data = await chrome.storage.local.get(['isUnblocked', 'isAdBlockerEnabled']);
-      this.currentState.isUnblocked = data.isUnblocked || false;
+      const data = await chrome.storage.local.get(['isAdBlockerEnabled']);
       this.currentState.isAdBlockerEnabled = data.isAdBlockerEnabled || false;
       console.log('설정 불러오기 완료:', this.currentState);
     } catch (error) {
@@ -268,36 +306,6 @@ class BackgroundManager {
            }
         });
     });
-  }
-
-  async toggleUnblockState(tabId) {
-    try {
-      this.currentState.isUnblocked = !this.currentState.isUnblocked;
-      this.updateIcon(this.currentState.isUnblocked);
-
-      // 상태를 스토리지에 저장합니다.
-      await chrome.storage.local.set({ isUnblocked: this.currentState.isUnblocked });
-
-      // 현재 탭에만 상태 변경을 알립니다.
-      chrome.tabs.sendMessage(tabId, {
-        action: 'toggleUnblock',
-        state: this.currentState.isUnblocked
-      }).catch(error => {
-        // console.warn(`Tab ${tabId}에 메시지 전송 실패: ${error.message}`);
-      });
-
-      // 팝업 UI를 업데이트합니다.
-      chrome.runtime.sendMessage({
-        action: 'updatePopupState',
-        isUnblocked: this.currentState.isUnblocked
-      }).catch(err => { /* 팝업이 닫혀있을 수 있습니다. */ });
-
-    } catch (error) {
-      console.error('토글 상태 변경 오류:', error);
-      // 오류 발생 시 상태를 원복합니다.
-      this.currentState.isUnblocked = !this.currentState.isUnblocked;
-      this.updateIcon(this.currentState.isUnblocked);
-    }
   }
 
   // 디시인사이드 URL 리다이렉트 설정

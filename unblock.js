@@ -11,17 +11,19 @@
       this.intervalId = null;
       this.overrideIntervalId = null;
       this.globalListenersAdded = false;
-      this.initializeState();
       this.setupEventListeners();
+      this.syncStateFromBackground();
     }
-    
-    // 로컬 스토리지에서 상태를 불러옵니다.
-    async initializeState() {
+
+    async syncStateFromBackground() {
       try {
-        const data = await chrome.storage.local.get('isUnblocked');
-        this.isUnblocked = data.isUnblocked || false;
+        const response = await chrome.runtime.sendMessage({ action: 'getUnblockState' });
+        if (!response?.isUnblocked) return;
+
+        this.isUnblocked = true;
+        this.unblockAll();
       } catch (error) {
-        console.error('initializeState error:', error);
+        // 백그라운드 미준비 또는 확장 컨텍스트 종료
       }
     }
     
