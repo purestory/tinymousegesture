@@ -8,6 +8,10 @@
   const hostname = window.location.hostname;
   const isHitomiSite = hostname.includes('hitomi.la');
   const isTwidougaSite = hostname.includes('twidouga.net');
+  let isMrJavSite = false;
+  try {
+    isMrJavSite = hostname.includes('mrjav.net') || (window.top && window.top.location.hostname.includes('mrjav.net'));
+  } catch(e) {}
   
   // 차단할 도메인 목록
   const blockedDomains = [
@@ -23,7 +27,12 @@
     'banner',
     'popunder',
     'pop',
-    'promo'
+    'promo',
+    'kilojaya',
+    'satisfiednews',
+    'gullible-thanks',
+    'tsyndicate',
+    'alfalfaemployeeresource'
   ];
   
   // 투명한 오버레이 제거 함수
@@ -80,7 +89,15 @@
         pointer-events: auto !important;
       }
     `;
-    document.head.appendChild(styleEl);
+    if (document.head) {
+      document.head.appendChild(styleEl);
+    } else if (document.documentElement) {
+      document.documentElement.appendChild(styleEl);
+    } else {
+      document.addEventListener('DOMContentLoaded', () => {
+        if (document.head) document.head.appendChild(styleEl);
+      });
+    }
   }
 
   // 리디렉션 차단 강화 함수
@@ -89,27 +106,59 @@
     const originalLocation = window.location;
     let lastLocation = window.location.href;
     
-    // window.location 재정의
-    Object.defineProperty(window, 'location', {
-      get: function() {
-        return originalLocation;
-      },
-      set: function(value) {
-        // 문자열인 경우 URL로 처리
-        if (typeof value === 'string') {
-          const lowercaseUrl = value.toLowerCase();
-          const isBlocked = blockedDomains.some(domain => lowercaseUrl.includes(domain));
-          
-          if (isBlocked) {
-            console.log('차단된 리디렉션:', value);
-            return; // 리디렉션 차단
+    // window.location 재정의 (모던 브라우저에서는 에러가 발생하므로 try-catch로 감쌈)
+    try {
+      Object.defineProperty(window, 'location', {
+        get: function() {
+          return originalLocation;
+        },
+        set: function(value) {
+          // 문자열인 경우 URL로 처리
+          if (typeof value === 'string') {
+            const lowercaseUrl = value.toLowerCase();
+            const isBlocked = blockedDomains.some(domain => lowercaseUrl.includes(domain));
+            
+            if (isBlocked) {
+              console.log('차단된 리디렉션:', value);
+              return; // 리디렉션 차단
+            }
           }
+          // 차단되지 않은 URL은 정상 처리
+          originalLocation.href = value;
         }
-        // 차단되지 않은 URL은 정상 처리
-        originalLocation.href = value;
-      }
-    });
+      });
+    } catch (e) {
+      // Chrome 확장 프로그램 등에서 location 재정의가 불가능할 때 조용히 넘어감
+    }
     
+    // mrjav.net 팝업 무력화 (팝업 카운터를 이미 최대치로 조작)
+    if (isMrJavSite) {
+      try {
+        const pageId = btoa(window.location.pathname).substring(0, 16);
+        sessionStorage.setItem('v_pop_' + pageId, '3');
+      } catch (e) {
+        console.error('mrjav 팝업 차단 중 오류:', e);
+      }
+
+      // CSP를 우회하여 MAIN world에 스크립트를 주입하기 위해 확장 프로그램 내부의 파일을 사용
+      const injectPopupBlocker = () => {
+        if (chrome.runtime && chrome.runtime.getURL) {
+          const script = document.createElement('script');
+          script.src = chrome.runtime.getURL('mrjavOverride.js');
+          (document.head || document.documentElement).appendChild(script);
+          script.onload = function() {
+            script.remove();
+          };
+        }
+      };
+      
+      if (document.head || document.documentElement) {
+        injectPopupBlocker();
+      } else {
+        document.addEventListener('DOMContentLoaded', injectPopupBlocker);
+      }
+    }
+
     // 리디렉션 방지를 위한 추가 보호
     if (isTwidougaSite) {
       // twidouga.net의 페이지 이동 방지 (특정 이벤트에서)

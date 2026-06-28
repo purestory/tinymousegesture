@@ -63,10 +63,11 @@
       "type": "module"
     },
     {
-      "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*"],
+      "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*", "*://*.mrjav.net/*"],
       "js": ["adBlocker.js"],
       "run_at": "document_start",
-      "all_frames": true
+      "all_frames": true,
+      "match_about_blank": true
     },
     {
       "matches": ["*://*.hitomi.la/*"],
@@ -79,7 +80,8 @@
       "i18n/messages.js",
       "icons/*",
       "styles/*",
-      "override.js"
+      "override.js",
+      "mrjavOverride.js"
     ],
     "matches": ["<all_urls>"],
     "use_dynamic_url": true

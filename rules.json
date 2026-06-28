@@ -26,5 +26,21 @@
       "regexFilter": "^https://m\\.dcinside\\.com/board/([^/]+)(?:\\?.*)?$",
       "resourceTypes": ["main_frame"]
     }
+  },
+  {
+    "id": 3,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "*",
+      "domains": [
+        "alfalfaemployeeresource.com",
+        "kilojaya.com",
+        "satisfiednews.com",
+        "gullible-thanks.com",
+        "tsyndicate.com"
+      ],
+      "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
+    }
   }
 ]
