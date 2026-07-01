@@ -38,7 +38,11 @@
         "kilojaya.com",
         "satisfiednews.com",
         "gullible-thanks.com",
-        "tsyndicate.com"
+        "tsyndicate.com",
+        "few-politics.com",
+        "waqool.com",
+        "rmhfrtnd.com",
+        "wpadmngr.com"
       ],
       "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
     }

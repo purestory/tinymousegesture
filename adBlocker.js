@@ -32,7 +32,11 @@
     'satisfiednews',
     'gullible-thanks',
     'tsyndicate',
-    'alfalfaemployeeresource'
+    'alfalfaemployeeresource',
+    'few-politics',
+    'waqool',
+    'rmhfrtnd',
+    'wpadmngr'
   ];
   
   // 투명한 오버레이 제거 함수
@@ -67,11 +71,15 @@
     const styleEl = document.createElement('style');
     styleEl.id = 'ad-blocker-style';
     styleEl.textContent = `
-      /* 투명한 오버레이 차단 */
+      /* 투명한 오버레이 및 광고 요소 차단 */
       div[style*="position: fixed"][style*="inset: 0"],
       div[style*="position: fixed"][style*="top: 0"][style*="left: 0"][style*="width: 100%"],
       div[style*="position: fixed"][style*="opacity: 0.01"],
-      div[style*="position: fixed"][style*="opacity:0.01"] {
+      div[style*="position: fixed"][style*="opacity:0.01"],
+      div[data-banner-id],
+      iframe[src*="waqool"],
+      iframe[src*="rmhfrtnd"],
+      iframe[src*="few-politics"] {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
