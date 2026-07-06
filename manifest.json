@@ -63,7 +63,7 @@
       "type": "module"
     },
     {
-      "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*", "*://*.mrjav.net/*", "*://*.swiftuploads.com/*"],
+      "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*", "*://*.mrjav.net/*", "*://*.swiftuploads.com/*", "*://*.game-repack.site/*"],
       "js": ["adBlocker.js"],
       "run_at": "document_start",
       "all_frames": true,
@@ -75,7 +75,7 @@
       "run_at": "document_start"
     },
     {
-      "matches": ["*://*.mrjav.net/*", "*://*.swiftuploads.com/*"],
+      "matches": ["*://*.mrjav.net/*", "*://*.swiftuploads.com/*", "*://*.game-repack.site/*"],
       "js": ["mrjavOverride.js"],
       "run_at": "document_start",
       "all_frames": true,

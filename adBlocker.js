@@ -7,6 +7,7 @@
   const isHitomiSite = hostname.includes('hitomi.la');
   const isTwidougaSite = hostname.includes('twidouga.net');
   const isSwiftUploadsSite = hostname.includes('swiftuploads.com');
+  const isGameRepackSite = hostname.includes('game-repack.site');
   let isMrJavSite = false;
   try {
     isMrJavSite = hostname.includes('mrjav.net') || (window.top && window.top.location.hostname.includes('mrjav.net'));
@@ -100,7 +101,7 @@
       } catch (e) {}
     }
 
-    if (isMrJavSite || isSwiftUploadsSite) {
+    if (isMrJavSite || isSwiftUploadsSite || isGameRepackSite) {
       const injectPopupBlocker = () => {
         if (chrome.runtime && chrome.runtime.getURL) {
           const script = document.createElement('script');
@@ -111,6 +112,70 @@
       };
       if (document.head || document.documentElement) injectPopupBlocker();
       else document.addEventListener('DOMContentLoaded', injectPopupBlocker);
+    }
+
+    if (isGameRepackSite) {
+      // 1. 가짜 다운로드 버튼 숨기기 (.file-download-btnn, .random)
+      const style = document.createElement('style');
+      style.textContent = `
+        .file-download-btnn,
+        .random {
+          display: none !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          position: absolute !important;
+          z-index: -9999 !important;
+        }
+      `;
+      (document.head || document.documentElement).appendChild(style);
+
+      const allowedHosts = [
+        'mega.nz', 'drive.google.com', 'mediafire.com', '1fichier.com', 'qiwi.gg',
+        'gofile.io', 'pixeldrain.com', 'krakenfiles.com', 'datanodes.to',
+        'onedrive.live.com', 'sharemods.com', 'letsupload.io', 'send.cm',
+        'buzzheavier.com', 'multiup.org', 'bowfile.com', 'uploadhub.to',
+        'file-me.top', 'swiftuploads.com', 'up-4ever.net', 'zovo.ink', 'zovo2.top'
+      ];
+
+      // 2. 캡처 단계에서 모든 클릭/마우스 이벤트 가로채기 (광고 스크립트가 실행되기 전)
+      const forceNavigate = function(e) {
+        const link = e.target.closest('a');
+        if (link) {
+          const href = link.href || '';
+          const isInternal = href.includes(hostname) || href.startsWith('/') || href.startsWith('#') || href === '';
+          const isAllowed = allowedHosts.some(domain => href.toLowerCase().includes(domain)) || href.startsWith('magnet:');
+          
+          if (isInternal || isAllowed) {
+            // 이벤트 버블링 차단 (광고 스크립트가 인식하지 못하게 함)
+            e.stopPropagation();
+            
+            // click 이벤트일 때만 강제 이동 처리 (중복 실행 방지)
+            if (e.type === 'click') {
+              e.preventDefault();
+              link.removeAttribute('target'); // 새 탭 속성 제거
+              console.log('MAIN world 강제 이동 처리 (광고 완벽 우회):', href);
+              if (href && href !== 'javascript:void(0)' && href !== '#') {
+                 window.location.href = href;
+              }
+            }
+          }
+        }
+      };
+
+      window.addEventListener('click', forceNavigate, true);
+      window.addEventListener('mousedown', forceNavigate, true);
+      window.addEventListener('mouseup', forceNavigate, true);
+      window.addEventListener('pointerdown', forceNavigate, true);
+      window.addEventListener('pointerup', forceNavigate, true);
+
+      // 가짜 버튼 지속적 제거
+      setInterval(() => {
+        try {
+          document.querySelectorAll('.file-download-btnn, .random').forEach(el => {
+            el.style.display = 'none';
+          });
+        } catch(e) {}
+      }, 1000);
     }
 
     if (isTwidougaSite || isSwiftUploadsSite) {

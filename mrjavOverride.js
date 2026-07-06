@@ -25,7 +25,26 @@
     const hasNewTabTarget = t && !['_self', '_top', '_parent'].includes(t);
     const isExternalHref = href && !href.includes(hostname) && !href.startsWith('/') && !href.startsWith('javascript:');
 
-    if (hasNewTabTarget || isExternalHref) {
+    const isDownload = this.hasAttribute('download') || href.startsWith('blob:') || href.startsWith('data:');
+    const isUnattached = !document.contains(this);
+
+    // DOM에 연결되지 않은 가짜 태그 클릭 차단 (다운로드용 제외)
+    if (isUnattached && !isDownload) {
+      console.log('MAIN world 팝업 차단 (Unattached a.click):', href);
+      return;
+    }
+
+    let shouldBlock = false;
+    if (hostname.includes('game-repack.site')) {
+      if (isExternalHref) {
+        const isAllowed = allowedHosts.some(domain => href.toLowerCase().includes(domain)) || href.startsWith('magnet:');
+        shouldBlock = !isAllowed;
+      }
+    } else {
+      shouldBlock = hasNewTabTarget || isExternalHref;
+    }
+
+    if (shouldBlock) {
       console.log('MAIN world 팝업 차단 (a.click):', href, t);
       return;
     }
@@ -37,7 +56,20 @@
   const originalSubmit = HTMLFormElement.prototype.submit;
   const hookedSubmit = function() {
     const t = this.target ? this.target.toLowerCase() : '';
-    if (t && !['_self', '_top', '_parent'].includes(t)) {
+    const action = this.action || '';
+    
+    let shouldBlock = false;
+    if (hostname.includes('game-repack.site')) {
+      const isExternalAction = action && !action.includes(hostname) && !action.startsWith('/') && !action.startsWith('javascript:');
+      if (isExternalAction) {
+        const isAllowed = allowedHosts.some(domain => action.toLowerCase().includes(domain));
+        shouldBlock = !isAllowed;
+      }
+    } else {
+      shouldBlock = t && !['_self', '_top', '_parent'].includes(t);
+    }
+
+    if (shouldBlock) {
       console.log('MAIN world 팝업 차단 (form.submit)', t);
       return;
     }
@@ -51,7 +83,29 @@
     if (event && event.type === 'click' && this.tagName === 'A') {
       const href = this.href || '';
       const t = this.target ? this.target.toLowerCase() : '';
-      if (t && !['_self', '_top', '_parent'].includes(t)) {
+      const hasNewTabTarget = t && !['_self', '_top', '_parent'].includes(t);
+      const isExternalHref = href && !href.includes(hostname) && !href.startsWith('/') && !href.startsWith('javascript:');
+      
+      const isDownload = this.hasAttribute('download') || href.startsWith('blob:') || href.startsWith('data:');
+      const isUnattached = !document.contains(this);
+
+      // DOM에 연결되지 않은 가짜 태그 이벤트 차단 (다운로드용 제외)
+      if (isUnattached && !isDownload) {
+        console.log('MAIN world 팝업 차단 (Unattached dispatchEvent):', href);
+        return false;
+      }
+
+      let shouldBlock = false;
+      if (hostname.includes('game-repack.site')) {
+        if (isExternalHref) {
+          const isAllowed = allowedHosts.some(domain => href.toLowerCase().includes(domain)) || href.startsWith('magnet:');
+          shouldBlock = !isAllowed;
+        }
+      } else {
+        shouldBlock = hasNewTabTarget || isExternalHref;
+      }
+
+      if (shouldBlock) {
         console.log('MAIN world 팝업 차단 (dispatchEvent):', href, t);
         return false;
       }
@@ -145,6 +199,23 @@
     hookIframe(existingIframes[i]);
   }
 
+  // 차단할 도메인 목록
+  const blockedDomains = [
+    'stripchatgirls', 'stripchat', 'chaturbate', 'livejasmin', 'biotrck',
+    'trafficjunky', 'adskeeper', 'ad-maven', 'kilojaya', 'satisfiednews',
+    'gullible-thanks', 'tsyndicate', 'alfalfaemployeeresource', 'few-politics',
+    'waqool', 'rmhfrtnd', 'wpadmngr', 'mqy60aa7.shop'
+  ];
+
+  // game-repack.site 등에서 허용할 정상적인 외부 다운로드 도메인 목록
+  const allowedHosts = [
+    'mega.nz', 'drive.google.com', 'mediafire.com', '1fichier.com', 'qiwi.gg',
+    'gofile.io', 'pixeldrain.com', 'krakenfiles.com', 'datanodes.to',
+    'onedrive.live.com', 'sharemods.com', 'letsupload.io', 'send.cm',
+    'buzzheavier.com', 'multiup.org', 'bowfile.com', 'uploadhub.to',
+    'file-me.top', 'swiftuploads.com', 'up-4ever.net', 'zovo.ink', 'zovo2.top'
+  ];
+
   // 4. 모든 종류의 클릭 이벤트 가로채기 (mouseup, mousedown 포함)
   const blockEvent = function(e) {
     try {
@@ -158,7 +229,18 @@
         const hasNewTabTarget = t && !['_self', '_top', '_parent'].includes(t);
         const isExternalHref = href && !href.includes(hostname) && !href.startsWith('/') && !href.startsWith('javascript:');
 
-        if (hasNewTabTarget || isExternalHref) {
+        let shouldBlock = false;
+        if (hostname.includes('game-repack.site')) {
+          // 외부 링크인 경우 허용된 다운로드 사이트인지 확인
+          if (isExternalHref) {
+            const isAllowed = allowedHosts.some(domain => href.toLowerCase().includes(domain)) || href.startsWith('magnet:');
+            shouldBlock = !isAllowed;
+          }
+        } else {
+          shouldBlock = hasNewTabTarget || isExternalHref;
+        }
+
+        if (shouldBlock) {
           e.preventDefault();
           e.stopPropagation();
           console.log('MAIN world 팝업 차단 (이벤트):', href, t);

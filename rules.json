@@ -58,7 +58,7 @@
       ]
     },
     "condition": {
-      "requestDomains": ["swiftuploads.com", "mrjav.net"],
+      "requestDomains": ["swiftuploads.com", "mrjav.net", "game-repack.site"],
       "resourceTypes": ["main_frame", "sub_frame"]
     }
   },
@@ -72,7 +72,7 @@
       ]
     },
     "condition": {
-      "requestDomains": ["swiftuploads.com"],
+      "requestDomains": ["swiftuploads.com", "game-repack.site"],
       "resourceTypes": ["main_frame"]
     }
   }
