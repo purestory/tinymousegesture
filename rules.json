@@ -46,5 +46,34 @@
       ],
       "resourceTypes": ["main_frame", "sub_frame", "script", "xmlhttprequest"]
     }
+  },
+  {
+    "id": 4,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        { "header": "Content-Security-Policy", "operation": "remove" },
+        { "header": "Content-Security-Policy-Report-Only", "operation": "remove" }
+      ]
+    },
+    "condition": {
+      "requestDomains": ["swiftuploads.com", "mrjav.net"],
+      "resourceTypes": ["main_frame", "sub_frame"]
+    }
+  },
+  {
+    "id": 5,
+    "priority": 2,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        { "header": "Content-Security-Policy", "operation": "append", "value": "sandbox allow-scripts allow-same-origin allow-forms allow-downloads allow-top-navigation" }
+      ]
+    },
+    "condition": {
+      "requestDomains": ["swiftuploads.com"],
+      "resourceTypes": ["main_frame"]
+    }
   }
 ]

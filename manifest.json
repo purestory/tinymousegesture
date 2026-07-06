@@ -63,7 +63,7 @@
       "type": "module"
     },
     {
-      "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*", "*://*.mrjav.net/*"],
+      "matches": ["*://*.hitomi.la/*", "*://*.twidouga.net/*", "*://*.mrjav.net/*", "*://*.swiftuploads.com/*"],
       "js": ["adBlocker.js"],
       "run_at": "document_start",
       "all_frames": true,
@@ -73,6 +73,14 @@
       "matches": ["*://*.hitomi.la/*"],
       "js": ["hitomiRedirect.js"],
       "run_at": "document_start"
+    },
+    {
+      "matches": ["*://*.mrjav.net/*", "*://*.swiftuploads.com/*"],
+      "js": ["mrjavOverride.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true,
+      "world": "MAIN"
     }
   ],
   "web_accessible_resources": [{
