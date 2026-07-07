@@ -142,15 +142,15 @@ class BackgroundManager {
           }
       });
 
-      // MissAV123 검색 메뉴 추가
+      // JAVHD 검색 메뉴 추가
       chrome.contextMenus.create({
-        id: 'searchMissAV',
-        title: getMessage('searchOnMissAV', '%s'),
+        id: 'searchJavHD',
+        title: getMessage('searchOnJavHD', '%s'),
         contexts: ['selection'],
         parentId: 'searchParent'
       }, () => {
           if (chrome.runtime.lastError) {
-              console.error("searchMissAV context menu creation failed: ", chrome.runtime.lastError.message);
+              console.error("searchJavHD context menu creation failed: ", chrome.runtime.lastError.message);
           }
       });
     });
@@ -177,8 +177,8 @@ class BackgroundManager {
       const subtitleUrl = `https://www.subtitlecat.com/index.php?search=${encodeURIComponent(info.selectionText)}`;
       chrome.tabs.create({ url: searchUrl });
       chrome.tabs.create({ url: subtitleUrl });
-    } else if (info.menuItemId === 'searchMissAV') {
-      const searchUrl = `https://missav123.com/ko/search/${encodeURIComponent(info.selectionText)}`;
+    } else if (info.menuItemId === 'searchJavHD') {
+      const searchUrl = `https://www.javhdporn.net/search/${encodeURIComponent(info.selectionText)}/`;
       const subtitleUrl = `https://www.subtitlecat.com/index.php?search=${encodeURIComponent(info.selectionText)}`;
       chrome.tabs.create({ url: searchUrl });
       chrome.tabs.create({ url: subtitleUrl });
@@ -297,12 +297,12 @@ class BackgroundManager {
            }
         });
 
-        // MissAV123 메뉴 업데이트
-        chrome.contextMenus.update('searchMissAV', {
-           title: getMessage('searchOnMissAV', '"%s"')
+        // JAVHD 메뉴 업데이트
+        chrome.contextMenus.update('searchJavHD', {
+           title: getMessage('searchOnJavHD', '"%s"')
         }, () => {
            if (chrome.runtime.lastError) {
-                console.warn("컨텍스트 메뉴 업데이트 실패(searchMissAV):", chrome.runtime.lastError.message);
+                console.warn("컨텍스트 메뉴 업데이트 실패(searchJavHD):", chrome.runtime.lastError.message);
            }
         });
     });

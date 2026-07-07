@@ -20,8 +20,8 @@ const messages = {
     searchGoogleRemoveLabel: "Search Google for \"uncensored %s\"",
     // Supjav
     searchOnSupjav: "Search \"%s\" on Supjav",
-    // MissAV123
-    searchOnMissAV: "Search \"%s\" on MissAV123",
+    // JAVHD
+    searchOnJavHD: "Search \"%s\" on JAVHD",
     // DCInside URL Redirect
     dcRedirectText: "DCInside URL Auto Redirect",
     dcRedirectDescription: "Automatically redirects mobile DCInside URLs to desktop version"
@@ -44,8 +44,8 @@ const messages = {
     searchGoogleRemoveLabel: "\"uncensored %s\" 구글 검색",
     // Supjav
     searchOnSupjav: "Supjav에서 \"%s\" 검색",
-    // MissAV123
-    searchOnMissAV: "MissAV123에서 \"%s\" 검색",
+    // JAVHD
+    searchOnJavHD: "JAVHD에서 \"%s\" 검색",
     // DCInside URL Redirect
     dcRedirectText: "디시인사이드 URL 자동 변환",
     dcRedirectDescription: "모바일 디시인사이드 URL을 자동으로 데스크탑 버전으로 변환합니다"
