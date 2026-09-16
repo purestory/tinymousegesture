@@ -46,9 +46,9 @@
     styleEl.textContent = `
       div[style*="position: fixed"][style*="inset: 0"],
       div[style*="position: fixed"][style*="top: 0"][style*="left: 0"][style*="width: 100%"],
-      div[style*="position: fixed"][style*="opacity: 0.01"],
       div[style*="position: fixed"][style*="opacity:0.01"],
       div[data-banner-id],
+      #ad-gate,
       iframe[src*="waqool"],
       iframe[src*="rmhfrtnd"],
       iframe[src*="few-politics"] {

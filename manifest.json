@@ -81,6 +81,13 @@
       "all_frames": true,
       "match_about_blank": true,
       "world": "MAIN"
+    },
+    {
+      "matches": ["*://*.twidouga.net/*"],
+      "js": ["twidougaOverride.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
     }
   ],
   "web_accessible_resources": [{
